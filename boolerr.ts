@@ -22,29 +22,6 @@ function parseRepeat(source: string): PartSource<Part> {
     : next;
 }
 
-function loop<State>(start: State, update: (state: State) => State): State {
-  let state = start;
-  while (state) {
-    state = update(state);
-  }
-  return state;
-}
-
-function parsePatternFun(source: string): Pattern {
-  const pattern: Pattern = [];
-  loop(source, (state) => {
-    const next = parseRepeat(state);
-    pattern.push(next.part);
-    return next.source;
-  });
-  // while (source) {
-  //   const next = parseRepeat(source);
-  //   source = next.source;
-  //   pattern.push(next.part);
-  // }
-  return pattern;
-}
-
 function parsePattern(source: string): Pattern {
   const pattern: Pattern = [];
   while (source) {
@@ -86,7 +63,7 @@ function main() {
   //   const truthy = processed ? "✓" : "✗";
   //   console.log(`${truthy} "${text}" is ${processed}`);
   // }
-  const pattern = parsePatternFun("a*b");
+  const pattern = parsePattern("a*b");
   console.log(pattern);
 }
 
