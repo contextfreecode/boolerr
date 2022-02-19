@@ -1,7 +1,37 @@
-type Char = string;
-type Repeat = { repeat: Char };
-type Part = Char | Repeat;
+type Letter = string;
+type Repeat = { repeat: Letter };
+type Part = Letter | Repeat;
 type Pattern = Part[];
+
+function parsePattern(text: string): Pattern {
+  let part: Part | undefined;
+  let pattern: Pattern = [];
+  let commit = () => {
+    if (part !== undefined) {
+      pattern.push(part as Part);
+      part = undefined;
+    }
+  }
+  for (const token of text) {
+    if (token.match(/[A-Za-z]/)) {
+      if (part) {
+        commit();
+      }
+      part = token;
+    } else if (token == "*") {
+      if (typeof part == "string") {
+        part = { repeat: part };
+        commit();
+      } else {
+        throw Error(`bad pattern: ${part}`)
+      }
+    } else {
+      throw Error("bad token")
+    }
+  }
+  commit();
+  return pattern;
+}
 
 function parseBool(text: string): boolean {
   const result = { true: true, false: false }[text];
@@ -29,11 +59,13 @@ function processResult(text: string): boolean | Error | undefined {
 }
 
 function main() {
-  for (let text of ["true", "false", "", "bad"]) {
-    const processed = processResult(text);
-    const truthy = processed ? "✓" : "✗";
-    console.log(`${truthy} "${text}" is ${processed}`);
-  }
+  // for (let text of ["true", "false", "", "bad"]) {
+  //   const processed = processResult(text);
+  //   const truthy = processed ? "✓" : "✗";
+  //   console.log(`${truthy} "${text}" is ${processed}`);
+  // }
+  const pattern = parsePattern("a*b");
+  console.log(pattern);
 }
 
 main();
