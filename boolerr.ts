@@ -3,33 +3,32 @@ type Repeat = { repeat: Letter };
 type Part = Letter | Repeat;
 type Pattern = Part[];
 
-function parsePattern(text: string): Pattern {
-  let part: Part | undefined;
-  let pattern: Pattern = [];
-  let commit = () => {
-    if (part !== undefined) {
-      pattern.push(part as Part);
-      part = undefined;
-    }
+type PartSource<SpecificPart extends Part> = {
+  part: SpecificPart;
+  source: string;
+};
+
+function parseLetter(source: string): PartSource<Letter> {
+  if (source.match(/^[A-Za-z]/)) {
+    return { part: source[0], source: source.slice(1) };
   }
-  for (const token of text) {
-    if (token.match(/[A-Za-z]/)) {
-      if (part) {
-        commit();
-      }
-      part = token;
-    } else if (token == "*") {
-      if (typeof part == "string") {
-        part = { repeat: part };
-        commit();
-      } else {
-        throw Error(`bad pattern: ${part}`)
-      }
-    } else {
-      throw Error("bad token")
-    }
+  throw Error("bad letter");
+}
+
+function parseRepeat(source: string): PartSource<Part> {
+  const next = parseLetter(source);
+  return next.source[0] == "*"
+    ? { part: { repeat: next.part }, source: next.source.slice(1) }
+    : next;
+}
+
+function parsePattern(source: string): Pattern {
+  const pattern: Pattern = [];
+  while (source) {
+    const next = parseRepeat(source);
+    source = next.source;
+    pattern.push(next.part);
   }
-  commit();
   return pattern;
 }
 
