@@ -1,4 +1,4 @@
-function parseBool(text: string) {
+function parseBool(text: string): boolean {
     const result = {true: true, false: false}[text];
     if (result == null) {
         throw Error("bad bool")
@@ -6,14 +6,28 @@ function parseBool(text: string) {
     return result;
 }
 
-function process(text: string) {
-    return text ? parseBool(text) : null;
+function parseBoolResult(text: string): boolean | Error {
+    const result = {true: true, false: false}[text];
+    if (result == null) {
+        return Error("bad bool")
+    }
+    return result;
+}
+
+function process(text: string): boolean | undefined {
+    return text ? parseBool(text) : undefined;
+}
+
+// function processResult(text: string): undefined | true | Error | false {
+function processResult(text: string): boolean | Error | undefined {
+    return text ? parseBoolResult(text) : undefined;
 }
 
 function main() {
     for (let text of ["true", "false", "", "bad"]) {
-        const processed = process(text);
-        console.log(`"${text}" is ${processed}`)
+        const processed = processResult(text);
+        const truthy = processed ? "✓" : "✗";
+        console.log(`${truthy} "${text}" is ${processed}`)
     }
 }
 
