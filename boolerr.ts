@@ -12,14 +12,14 @@ function parseLetter(source: string): PartSource<Letter> {
   if (source.match(/^[a-z]/)) {
     return { part: source[0], source: source.slice(1) };
   }
-  throw Error("bad letter");
+  throw Error(`bad letter: ${source[0]}`);
 }
 
 function parseRepeat(source: string): PartSource<Part> {
-  const next = parseLetter(source);
-  return next.source[0] == "*"
-    ? { part: { repeat: next.part }, source: next.source.slice(1) }
-    : next;
+  const sub = parseLetter(source);
+  return sub.source[0] == "*"
+    ? { part: { repeat: sub.part }, source: sub.source.slice(1) }
+    : sub;
 }
 
 function parsePattern(source: string): Pattern {
@@ -63,8 +63,9 @@ function main() {
   //   const truthy = processed ? "✓" : "✗";
   //   console.log(`${truthy} "${text}" is ${processed}`);
   // }
-  const pattern = parsePattern("a*b");
-  console.log(pattern);
+  for (const source of ["", "a*b", "a*b*", "a**"]) {
+    console.log(`"${source}" ->`, parsePattern(source));
+  }
 }
 
 main();
