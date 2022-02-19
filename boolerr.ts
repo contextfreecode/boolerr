@@ -9,7 +9,7 @@ type PartSource<SpecificPart extends Part> = {
 };
 
 function parseLetter(source: string): PartSource<Letter> {
-  if (source.match(/^[A-Za-z]/)) {
+  if (source.match(/^[a-z]/)) {
     return { part: source[0], source: source.slice(1) };
   }
   throw Error("bad letter");
