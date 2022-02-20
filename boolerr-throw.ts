@@ -66,11 +66,19 @@ function parseEvalPattern(source: string, subject: string): boolean {
 function main() {
   const subjects = ["", "b", "aaab", "aaa", "aaabbb", "abba"];
   for (const source of ["", "a*b", "a*b*", "a**"]) {
-    console.log(`"${source}":`, parsePattern(source));
+    console.log(`"${source}":`);
+    // console.log(parsePattern(source));
     for (const subject of subjects) {
-      console.log(`  ${subject}: ${parseEvalPattern(source, subject)}`);
+      try {
+        console.log(`  "${subject}": ${parseEvalPattern(source, subject)}`);
+      } catch (error) {
+        console.log(`${error}`);
+      }
     }
   }
 }
 
 main();
+
+// Junk to prevent vscode from whining about duplicate ids.
+export const throwing = undefined;
