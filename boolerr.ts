@@ -3,7 +3,7 @@ type Repeat = { repeat: Letter };
 type Part = Letter | Repeat;
 type Pattern = Part[];
 
-type PartSource<SpecificPart extends Part> = {
+type PartSource<SpecificPart extends Part = Part> = {
   part: SpecificPart;
   source: string;
 };
@@ -12,10 +12,10 @@ function parseLetter(source: string): PartSource<Letter> {
   if (source.match(/^[a-z]/)) {
     return { part: source[0], source: source.slice(1) };
   }
-  throw Error(`bad letter: ${source[0]}`);
+  throw Error(`bad letter: '${source[0]}'`);
 }
 
-function parseRepeat(source: string): PartSource<Part> {
+function parseRepeat(source: string): PartSource {
   const sub = parseLetter(source);
   return sub.source[0] == "*"
     ? { part: { repeat: sub.part }, source: sub.source.slice(1) }
@@ -32,39 +32,44 @@ function parsePattern(source: string): Pattern {
   return pattern;
 }
 
-function parseBool(text: string): boolean {
-  const result = { true: true, false: false }[text];
-  if (result == null) {
-    throw Error("bad bool");
+function evalLetter(letter: string, subject: string): string | undefined {
+  return letter == subject[0] ? subject.slice(1) : undefined;
+}
+
+function evalRepeat({ repeat }: Repeat, subject: string): string | undefined {
+  while (subject) {
+    const result = evalLetter(repeat, subject);
+    if (result === undefined) return subject;
+    subject = result;
   }
-  return result;
+  return subject; // == ""
 }
 
-function parseBoolResult(text: string): boolean | Error {
-  const result = { true: true, false: false }[text];
-  if (result == null) {
-    return Error("bad bool");
+function evalPattern(pattern: Pattern, subject: string): string | undefined {
+  for (const part of pattern) {
+    const next = typeof part == "string"
+      ? evalLetter(part, subject)
+      : evalRepeat(part, subject);
+    if (next === undefined) return undefined;
+    subject = next;
   }
-  return result;
+  return subject && undefined;
 }
 
-function process(text: string): boolean | undefined {
-  return text ? parseBool(text) : undefined;
+function parseEvalPattern(source: string, subject: string): boolean {
+  // Both "" and undefined are falsy in JS, so check explicitly.
+  return evalPattern(parsePattern(source), subject) !== undefined;
 }
 
-// function processResult(text: string): undefined | true | Error | false {
-function processResult(text: string): boolean | Error | undefined {
-  return text ? parseBoolResult(text) : undefined;
-}
+// Consider `undefined | true | Error | false`
 
 function main() {
-  // for (let text of ["true", "false", "", "bad"]) {
-  //   const processed = processResult(text);
-  //   const truthy = processed ? "✓" : "✗";
-  //   console.log(`${truthy} "${text}" is ${processed}`);
-  // }
+  const subjects = ["", "b", "aaab", "aaa", "aaabbb", "abba"];
   for (const source of ["", "a*b", "a*b*", "a**"]) {
-    console.log(`"${source}" ->`, parsePattern(source));
+    console.log(`"${source}":`, parsePattern(source));
+    for (const subject of subjects) {
+      console.log(`  ${subject}: ${parseEvalPattern(source, subject)}`);
+    }
   }
 }
 
