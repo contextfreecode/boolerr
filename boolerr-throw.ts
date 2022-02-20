@@ -39,7 +39,7 @@ function evalLetter(letter: string, subject: string): string | undefined {
 function evalRepeat({ repeat }: Repeat, subject: string): string | undefined {
   while (subject) {
     const result = evalLetter(repeat, subject);
-    if (result === undefined) return subject;
+    if (result == undefined) return subject;
     subject = result;
   }
   return subject; // == ""
@@ -50,27 +50,29 @@ function evalPattern(pattern: Pattern, subject: string): string | undefined {
     const next = typeof part == "string"
       ? evalLetter(part, subject)
       : evalRepeat(part, subject);
-    if (next === undefined) return undefined;
+    if (next == undefined) return undefined;
     subject = next;
   }
   return subject && undefined;
 }
 
-function parseEvalPattern(source: string, subject: string): boolean {
+function parseEvalPattern(
+  source: string,
+  subject: string | undefined,
+): boolean | undefined { // true | false
+  if (subject == undefined) return undefined;
   // Both "" and undefined are falsy in JS, so check explicitly.
   return evalPattern(parsePattern(source), subject) !== undefined;
 }
 
-// Consider `undefined | true | Error | false`
-
 function main() {
-  const subjects = ["", "b", "aaab", "aaa", "aaabbb", "abba"];
+  const subjects = ["", "b", "aaab", "aaa", "aaabbb", "abba", undefined];
   for (const source of ["", "a*b", "a*b*", "a**"]) {
     console.log(`"${source}":`);
     // console.log(parsePattern(source));
     for (const subject of subjects) {
       try {
-        console.log(`  "${subject}": ${parseEvalPattern(source, subject)}`);
+        console.log(`  ${subject}: ${parseEvalPattern(source, subject)}`);
       } catch (error) {
         console.log(`${error}`);
       }
