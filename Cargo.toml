@@ -1,0 +1,11 @@
+[package]
+name = "boolerr"
+version = "0.1.0"
+authors = ["Tom <tom@contextfree.info>"]
+edition = "2021"
+
+[dependencies]
+
+[[bin]]
+name = "boolerr"
+path = "boolerr.rs"
