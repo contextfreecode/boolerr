@@ -1,6 +1,3 @@
-use std::iter::Peekable;
-use std::str::Chars;
-
 type Letter = char;
 type Repeat = Letter;
 #[derive(Debug)]
@@ -10,7 +7,7 @@ enum Part {
 }
 type Pattern = Vec<Part>;
 
-type Source<'a> = Peekable<Chars<'a>>;
+type Source<'a> = std::iter::Peekable<std::str::Chars<'a>>;
 
 #[derive(Debug)]
 struct ParseError {}
