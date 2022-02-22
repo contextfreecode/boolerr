@@ -20,9 +20,9 @@ impl std::error::Error for ParseError {}
 
 fn parse_letter(source: &mut Source) -> Result<Letter, ParseError> {
     match source.peek() {
-        Some(&c @ 'a'..='z') => {
+        Some(&letter @ 'a'..='z') => {
             source.next();
-            Ok(c)
+            Ok(letter)
         }
         _ => Err(ParseError {}),
     }
