@@ -1,10 +1,8 @@
 use std::iter::Peekable;
 use std::str::Chars;
 
-#[derive(Debug)]
-struct Letter(char);
-#[derive(Debug)]
-struct Repeat(Letter);
+type Letter = char;
+type Repeat = Letter;
 #[derive(Debug)]
 enum Part {
     Letter(Letter),
@@ -27,7 +25,7 @@ fn parse_letter(source: &mut Source) -> Result<Letter, ParseError> {
     match source.peek() {
         Some(&c @ 'a'..='z') => {
             source.next();
-            Ok(Letter(c))
+            Ok(c)
         }
         _ => Err(ParseError {}),
     }
@@ -38,7 +36,7 @@ fn parse_repeat(source: &mut Source) -> Result<Part, ParseError> {
     match source.peek() {
         Some('*') => {
             source.next();
-            Ok(Part::Repeat(Repeat(sub)))
+            Ok(Part::Repeat(sub))
         }
         _ => Ok(Part::Letter(sub)),
     }
@@ -54,6 +52,8 @@ fn parse_pattern(source: &mut Source) -> Result<Pattern, ParseError> {
 }
 
 fn main() {
-    let pattern = parse_pattern(&mut "a*b".chars().peekable());
-    println!("{:?}", pattern);
+    for source in vec!["", "a*b", "a*b*", "a**"] {
+        let pattern = parse_pattern(&mut source.chars().peekable());
+        println!("{:?}", pattern);
+    }
 }
