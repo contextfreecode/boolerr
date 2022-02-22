@@ -30,13 +30,13 @@ fn parse_letter(source: &mut Source) -> Result<Letter, ParseError> {
 
 fn parse_repeat(source: &mut Source) -> Result<Part, ParseError> {
     let sub = parse_letter(source)?;
-    match source.peek() {
+    Ok(match source.peek() {
         Some('*') => {
             source.next();
-            Ok(Part::Repeat(sub))
+            Part::Repeat(sub)
         }
-        _ => Ok(Part::Letter(sub)),
-    }
+        _ => Part::Letter(sub),
+    })
 }
 
 fn parse_pattern(source: &mut Source) -> Result<Pattern, ParseError> {
