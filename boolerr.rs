@@ -1,56 +1,40 @@
-type Letter = char;
-type Repeat = Letter;
-#[derive(Debug)]
-enum Part {
-    Letter(Letter),
-    Repeat(Repeat),
+// use std::io::{Error, ErrorKind};
+
+struct Doc {
+    head: Option<Head>,
 }
-type Pattern = Vec<Part>;
 
-type Source<'a> = std::iter::Peekable<std::str::Chars<'a>>;
+struct Head {
+    title: Option<String>,
+}
 
-#[derive(Debug)]
-struct ParseError {}
-impl std::fmt::Display for ParseError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{:?}", self)
+struct DocReport {
+    title: String,
+    ok: bool,
+}
+
+// #[derive(Debug)]
+// struct Error(String)
+// impl std::fmt::Display for Error {
+//     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+//         write!(f, "{:?}", self)
+//     }
+// }
+// impl std::error::Error for Error {}
+
+fn read_doc(url: &str) -> Result<Doc, String> {
+    match () {
+        _ if url.contains("fail") => Err("Failed to read document".into()),
+        _ if url.contains("headless") => Ok(Doc { head: None }),
+        _ if url.contains("empty") => Ok(Doc {
+            head: Some(Head { title: None }),
+        }),
+        _ => Ok(Doc {
+            head: Some(Head {
+                title: Some("Something".into()),
+            }),
+        }),
     }
 }
-impl std::error::Error for ParseError {}
 
-fn parse_letter(source: &mut Source) -> Result<Letter, ParseError> {
-    match source.peek() {
-        Some(&letter @ 'a'..='z') => {
-            source.next();
-            Ok(letter)
-        }
-        _ => Err(ParseError {}),
-    }
-}
-
-fn parse_repeat(source: &mut Source) -> Result<Part, ParseError> {
-    let sub = parse_letter(source)?;
-    Ok(match source.peek() {
-        Some('*') => {
-            source.next();
-            Part::Repeat(sub)
-        }
-        _ => Part::Letter(sub),
-    })
-}
-
-fn parse_pattern(source: &mut Source) -> Result<Pattern, ParseError> {
-    let mut pattern = vec![];
-    while source.peek().is_some() {
-        let next = parse_repeat(source)?;
-        pattern.push(next);
-    }
-    Ok(pattern)
-}
-
-fn main() {
-    for source in vec!["", "a*b", "a*b*", "a**"] {
-        let pattern = parse_pattern(&mut source.chars().peekable());
-        println!("{:?}", pattern);
-    }
-}
+fn main() {}
