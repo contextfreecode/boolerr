@@ -1,81 +1,49 @@
-type Letter = string;
-type Repeat = { repeat: Letter };
-type Part = Letter | Repeat;
-type Pattern = Part[];
+type Doc = { head?: Head };
+type Head = { title?: string };
+type DocReport = { title: string | undefined, ok: boolean };
 
-type PartSource<SpecificPart extends Part = Part> = {
-  part: SpecificPart;
-  source: string;
-};
-
-function parseLetter(source: string): PartSource<Letter> {
-  if (source.match(/^[a-z]/)) {
-    return { part: source[0], source: source.slice(1) };
+function readDoc(url: string): Doc {
+  if (url.match("fail")) {
+    throw Error("Failed to read document");
+  } else {
+    // deno-fmt-ignore
+    return (
+      url.match("headless") ? {} :
+      url.match("empty") ? { head: { title: "" } } :
+      { head: { title: "Something" } }
+    );
   }
-  throw Error(`bad letter: '${source[0]}'`);
 }
 
-function parseRepeat(source: string): PartSource {
-  const sub = parseLetter(source);
-  return sub.source[0] == "*"
-    ? { part: { repeat: sub.part }, source: sub.source.slice(1) }
-    : sub;
+function buildDocReport(doc: Doc): DocReport {
+  // return { title: doc.head && doc.head.title, ok: true }
+  return { title: doc.head?.title, ok: true }
 }
 
-function parsePattern(source: string): Pattern {
-  const pattern: Pattern = [];
-  while (source) {
-    const next = parseRepeat(source);
-    source = next.source;
-    pattern.push(next.part);
+function readAndBuildDocReport(url: string): DocReport {
+  try {
+    return buildDocReport(readDoc(url));
+  } catch {
+    return { title: undefined, ok: false }
   }
-  return pattern;
 }
 
-function evalLetter(letter: string, subject: string): string | undefined {
-  return letter == subject[0] ? subject.slice(1) : undefined;
+function isTitleNonEmpty(doc: Doc): boolean | undefined {
+  return !!doc.head?.title;
 }
 
-function evalRepeat({ repeat }: Repeat, subject: string): string | undefined {
-  while (subject) {
-    const result = evalLetter(repeat, subject);
-    if (result == undefined) return subject;
-    subject = result;
-  }
-  return subject; // == ""
-}
-
-function evalPattern(pattern: Pattern, subject: string): string | undefined {
-  for (const part of pattern) {
-    const next = typeof part == "string"
-      ? evalLetter(part, subject)
-      : evalRepeat(part, subject);
-    if (next == undefined) return undefined;
-    subject = next;
-  }
-  return subject && undefined;
-}
-
-function parseEvalPattern(
-  source: string,
-  subject: string | undefined,
-): boolean | undefined { // true | false
-  if (subject == undefined) return undefined;
-  // Both "" and undefined are falsy in JS, so check explicitly.
-  return evalPattern(parsePattern(source), subject) !== undefined;
+function readIfTitleNonEmpty(url: string): boolean | undefined {
+  return isTitleNonEmpty(readDoc(url));
 }
 
 function main() {
-  const subjects = ["", "b", "aaab", "aaa", "aaabbb", "abba", undefined];
-  for (const source of ["", "a*b", "a*b*", "a**"]) {
-    console.log(`"${source}":`);
-    // console.log(parsePattern(source));
-    for (const subject of subjects) {
-      try {
-        console.log(`  ${subject}: ${parseEvalPattern(source, subject)}`);
-      } catch (error) {
-        console.log(`${error}`);
-      }
+  for (const url of ["good", "empty", "headless", "fail"]) {
+    console.log(`Checking "https://${url}/":`)
+    console.log("  Report:", readAndBuildDocReport(url));
+    try {
+      console.log("  Has title:", readIfTitleNonEmpty(url) || false);
+    } catch (error) {
+      console.log(`  Has title: ${error}`)
     }
   }
 }
