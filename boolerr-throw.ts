@@ -1,6 +1,6 @@
 type Doc = { head?: Head };
 type Head = { title?: string };
-type DocReport = { title: string | undefined, ok: boolean };
+type DocReport = { title: string | undefined; ok: boolean };
 
 function readDoc(url: string): Doc {
   if (url.match("fail")) {
@@ -17,19 +17,20 @@ function readDoc(url: string): Doc {
 
 function buildDocReport(doc: Doc): DocReport {
   // return { title: doc.head && doc.head.title, ok: true }
-  return { title: doc.head?.title, ok: true }
+  return { title: doc.head?.title, ok: true };
 }
 
 function readAndBuildDocReport(url: string): DocReport {
   try {
     return buildDocReport(readDoc(url));
   } catch {
-    return { title: undefined, ok: false }
+    return { title: undefined, ok: false };
   }
 }
 
 function isTitleNonEmpty(doc: Doc): boolean | undefined {
-  return !!doc.head?.title;
+  // return !!doc.head?.title;
+  return Boolean(doc.head?.title);
 }
 
 function readIfTitleNonEmpty(url: string): boolean | undefined {
@@ -38,12 +39,12 @@ function readIfTitleNonEmpty(url: string): boolean | undefined {
 
 function main() {
   for (const url of ["good", "empty", "headless", "fail"]) {
-    console.log(`Checking "https://${url}/":`)
+    console.log(`Checking "https://${url}/":`);
     console.log("  Report:", readAndBuildDocReport(url));
     try {
       console.log("  Has title:", readIfTitleNonEmpty(url) || false);
     } catch (error) {
-      console.log(`  Has title: ${error}`)
+      console.log("  Has title: ", error);
     }
   }
 }
