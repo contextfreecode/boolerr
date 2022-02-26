@@ -13,7 +13,7 @@ function readDoc(url: string): Doc | Error {
 }
 
 function buildDocReport(doc: Doc): DocReport {
-  // return { title: doc.head && doc.head.title, ok: true }
+  // return { title: doc.head && doc.head.title, ok: true };
   return { title: doc.head?.title, ok: true };
 }
 
@@ -27,8 +27,9 @@ function readAndBuildDocReport(url: string): DocReport {
 }
 
 function isTitleNonEmpty(doc: Doc): boolean | undefined {
-  // return !!doc.head?.title;
-  return Boolean(doc.head?.title);
+  const title = doc.head?.title;
+  // return title === undefined ? undefined : !!title;
+  return title === undefined ? undefined : Boolean(title);
 }
 
 function readIfTitleNonEmpty(url: string): boolean | undefined | Error {
@@ -41,7 +42,8 @@ function main() {
   for (const url of ["good", "empty", "headless", "fail"]) {
     console.log(`Checking "https://${url}/":`);
     console.log("  Report:", readAndBuildDocReport(url));
-    console.log("  Has title:", readIfTitleNonEmpty(url) || false);
+    const hasTitle = readIfTitleNonEmpty(url)
+    console.log(`  Has title: ${hasTitle} vs ${hasTitle || false}`);
   }
 }
 
