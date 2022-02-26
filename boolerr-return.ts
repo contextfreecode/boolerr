@@ -9,7 +9,7 @@ function readDoc(url: string): Doc | Error {
     url.match("head-missing") ? {} :
     url.match("title-missing") ? { head: { } } :
     url.match("title-empty") ? { head: { title: "" } } :
-    { head: { title: "Something" } }
+    { head: { title: `Title of ${url}` } }
   );
 }
 

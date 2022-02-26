@@ -6,6 +6,7 @@ struct Head {
     title: Option<String>,
 }
 
+#[allow(dead_code)] // not really dead because debug printing
 #[derive(Debug)]
 struct DocReport {
     title: Option<String>,
@@ -26,7 +27,7 @@ fn read_doc(url: &str) -> Result<Doc, String> {
         }),
         _ => Ok(Doc {
             head: Some(Head {
-                title: Some("Something".into()),
+                title: Some(format!("Title of {url}")),
             }),
         }),
     }

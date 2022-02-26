@@ -40,10 +40,10 @@ fn readDoc(allocator: Allocator, url: []const u8) !Doc {
         Doc{ .head = null }
     else if (contains(u8, url, "title-missing"))
         Doc{ .head = Head{ .title = null } }
-    else if (contains(u8, url, "title-empty")) // allocPrint is proxy for real work
+    else if (contains(u8, url, "title-empty"))
         Doc{ .head = Head{ .title = try std.fmt.allocPrint(allocator, "", .{}) } }
     else
-        Doc{ .head = Head{ .title = try std.fmt.allocPrint(allocator, "Something", .{}) } };
+        Doc{ .head = Head{ .title = try std.fmt.allocPrint(allocator, "Title of {s}", .{url}) } };
 }
 
 fn buildDocReport(doc: Doc) DocReport {
