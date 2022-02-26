@@ -36,9 +36,11 @@ fn contains(comptime T: type, haystack: []const T, needle: []const T) bool {
 fn readDoc(allocator: Allocator, url: []const u8) !Doc {
     return if (contains(u8, url, "fail"))
         error.FailedRead
-    else if (contains(u8, url, "headless"))
+    else if (contains(u8, url, "head-missing"))
         Doc{ .head = null }
-    else if (contains(u8, url, "untitled")) // allocPrint is proxy for real work
+    else if (contains(u8, url, "title-missing"))
+        Doc{ .head = Head{ .title = null } }
+    else if (contains(u8, url, "title-empty")) // allocPrint is proxy for real work
         Doc{ .head = Head{ .title = try std.fmt.allocPrint(allocator, "", .{}) } }
     else
         Doc{ .head = Head{ .title = try std.fmt.allocPrint(allocator, "Something", .{}) } };
@@ -69,7 +71,7 @@ fn readWhetherTitleNonEmpty(allocator: Allocator, url: []const u8) !?bool {
 
 pub fn main() !void {
     const print = std.io.getStdOut().writer().print;
-    const urls = [_][]const u8{ "good", "untitled", "headless", "fail" };
+    const urls = [_][]const u8{ "good", "title-empty", "title-missing", "head-missing", "fail" };
     for (urls) |url| {
         // Treat each scrape independently for memory.
         var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
@@ -83,6 +85,6 @@ pub fn main() !void {
             continue; // `noreturn` vs `never` vs `!` (never) vs `Nothing`
         };
         const has_title_bool = has_title orelse false;
-        try print("  Has title: {} vs {}\n", .{has_title, has_title_bool});
+        try print("  Has title: {} vs {}\n", .{ has_title, has_title_bool });
     }
 }

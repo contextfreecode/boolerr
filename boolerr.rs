@@ -15,8 +15,11 @@ struct DocReport {
 fn read_doc(url: &str) -> Result<Doc, String> {
     match () {
         _ if url.contains("fail") => Err("Failed to read document".into()),
-        _ if url.contains("headless") => Ok(Doc { head: None }),
-        _ if url.contains("untitled") => Ok(Doc {
+        _ if url.contains("head-missing") => Ok(Doc { head: None }),
+        _ if url.contains("title-missing") => Ok(Doc {
+            head: Some(Head { title: None }),
+        }),
+        _ if url.contains("title-empty") => Ok(Doc {
             head: Some(Head {
                 title: Some("".into()),
             }),
@@ -56,7 +59,14 @@ fn read_whether_title_non_empty(url: &str) -> Result<Option<bool>, String> {
 }
 
 fn main() {
-    for url in ["good", "untitled", "headless", "fail"] {
+    let urls = [
+        "good",
+        "title-empty",
+        "title-missing",
+        "head-missing",
+        "fail",
+    ];
+    for url in urls {
         println!(r#"Checking "https://{}/":"#, url);
         println!("  Report: {:?}", read_and_build_doc_report(url));
         let has_title = read_whether_title_non_empty(url);
