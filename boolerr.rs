@@ -16,8 +16,10 @@ fn read_doc(url: &str) -> Result<Doc, String> {
     match () {
         _ if url.contains("fail") => Err("Failed to read document".into()),
         _ if url.contains("headless") => Ok(Doc { head: None }),
-        _ if url.contains("empty") => Ok(Doc {
-            head: Some(Head { title: None }),
+        _ if url.contains("untitled") => Ok(Doc {
+            head: Some(Head {
+                title: Some("".into()),
+            }),
         }),
         _ => Ok(Doc {
             head: Some(Head {
@@ -49,15 +51,15 @@ fn is_title_non_empty(doc: &Doc) -> Option<bool> {
     Some(!doc.head.as_ref()?.title.as_ref()?.is_empty())
 }
 
-fn read_if_title_non_empty(url: &str) -> Result<Option<bool>, String> {
+fn read_whether_title_non_empty(url: &str) -> Result<Option<bool>, String> {
     Ok(is_title_non_empty(&read_doc(url)?))
 }
 
 fn main() {
-    for url in ["good", "empty", "headless", "fail"] {
+    for url in ["good", "untitled", "headless", "fail"] {
         println!(r#"Checking "https://{}/":"#, url);
         println!("  Report: {:?}", read_and_build_doc_report(url));
-        let has_title = read_if_title_non_empty(url);
+        let has_title = read_whether_title_non_empty(url);
         println!(
             "  Has title: {:?} vs {:?}",
             &has_title,

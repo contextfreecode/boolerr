@@ -2,17 +2,18 @@ type Doc = { head?: Head };
 type Head = { title?: string };
 type DocReport = { title: string | undefined; ok: boolean };
 
+function throwError(message: string): never {
+  throw Error(message);
+}
+
 function readDoc(url: string): Doc {
-  if (url.match("fail")) {
-    throw Error("Failed to read document");
-  } else {
-    // deno-fmt-ignore
-    return (
-      url.match("headless") ? {} :
-      url.match("untitled") ? { head: { title: "" } } :
-      { head: { title: "Something" } }
-    );
-  }
+  // deno-fmt-ignore
+  return (
+    url.match("fail") ? throwError("Failed to read document") :
+    url.match("headless") ? {} :
+    url.match("untitled") ? { head: { title: "" } } :
+    { head: { title: "Something" } }
+  );
 }
 
 function buildDocReport(doc: Doc): DocReport {
@@ -34,7 +35,7 @@ function isTitleNonEmpty(doc: Doc): boolean | undefined {
   return title === undefined ? undefined : Boolean(title);
 }
 
-function readIfTitleNonEmpty(url: string): boolean | undefined {
+function readWhetherTitleNonEmpty(url: string): boolean | undefined {
   return isTitleNonEmpty(readDoc(url));
 }
 
@@ -43,7 +44,7 @@ function main() {
     console.log(`Checking "https://${url}/":`);
     console.log("  Report:", readAndBuildDocReport(url));
     try {
-      const hasTitle = readIfTitleNonEmpty(url)
+      const hasTitle = readWhetherTitleNonEmpty(url);
       console.log(`  Has title: ${hasTitle} vs ${hasTitle || false}`);
     } catch (error) {
       console.log(`  Has title: ${error}`);

@@ -58,6 +58,15 @@ fn readAndBuildDocReport(allocator: Allocator, url: []const u8) DocReport {
     return buildDocReport(doc);
 }
 
+fn isTitleNonEmpty(doc: Doc) ?bool {
+    const maybe_title = if (doc.head) |head| head.title else null;
+    return if (maybe_title) |title| title.len > 0 else null;
+}
+
+fn readWhetherTitleNonEmpty(allocator: Allocator, url: []const u8) !?bool {
+    return isTitleNonEmpty(try readDoc(allocator, url));
+}
+
 pub fn main() !void {
     const print = std.io.getStdOut().writer().print;
     const urls = [_][]const u8{ "good", "untitled", "headless", "fail" };
@@ -69,5 +78,11 @@ pub fn main() !void {
         // Scrape.
         try print("Checking \"https://{s}/\":\n", .{url});
         try print("  Report: {}\n", .{readAndBuildDocReport(allocator, url)});
+        const has_title = readWhetherTitleNonEmpty(allocator, url) catch |err| {
+            try print("  Has title: {}\n", .{err});
+            continue; // `noreturn` vs `never` vs `!` (never) vs `Nothing`
+        };
+        const has_title_bool = has_title orelse false;
+        try print("  Has title: {} vs {}\n", .{has_title, has_title_bool});
     }
 }

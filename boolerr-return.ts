@@ -32,7 +32,7 @@ function isTitleNonEmpty(doc: Doc): boolean | undefined {
   return title === undefined ? undefined : Boolean(title);
 }
 
-function readIfTitleNonEmpty(url: string): boolean | undefined | Error {
+function readWhetherTitleNonEmpty(url: string): boolean | undefined | Error {
   const docOrError = readDoc(url);
   if (docOrError instanceof Error) return docOrError;
   return isTitleNonEmpty(docOrError);
@@ -42,7 +42,7 @@ function main() {
   for (const url of ["good", "untitled", "headless", "fail"]) {
     console.log(`Checking "https://${url}/":`);
     console.log("  Report:", readAndBuildDocReport(url));
-    const hasTitle = readIfTitleNonEmpty(url)
+    const hasTitle = readWhetherTitleNonEmpty(url);
     console.log(`  Has title: ${hasTitle} vs ${hasTitle || false}`);
   }
 }
