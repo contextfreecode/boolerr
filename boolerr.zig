@@ -6,7 +6,26 @@ const Head = struct { title: ?[]u8 };
 const DocReport = struct {
     title: ?[]u8,
     ok: bool,
+    pub fn format(
+        self: DocReport,
+        comptime fmt: []const u8,
+        options: std.fmt.FormatOptions,
+        writer: anytype,
+    ) !void {
+        _ = fmt;
+        _ = options;
+        // More general purpose option here by InKryption: https://zigbin.io/be9a52
+        try writer.writeAll("DocReport{ .title = ");
+        try printOptionalString(writer, self.title);
+        try writer.print(", .ok = {} }}", .{self.ok});
+    }
 };
+
+fn printOptionalString(writer: anytype, text: ?[]u8) !void {
+    if (text != null) try writer.writeByte('"');
+    try writer.print("{s}", .{text});
+    if (text != null) try writer.writeByte('"');
+}
 
 const Error = error{FailedRead};
 
@@ -19,8 +38,8 @@ fn readDoc(allocator: Allocator, url: []const u8) !Doc {
         error.FailedRead
     else if (contains(u8, url, "headless"))
         Doc{ .head = null }
-    else if (contains(u8, url, "untitled"))
-        Doc{ .head = Head{ .title = null } }
+    else if (contains(u8, url, "untitled")) // allocPrint is proxy for real work
+        Doc{ .head = Head{ .title = try std.fmt.allocPrint(allocator, "", .{}) } }
     else
         Doc{ .head = Head{ .title = try std.fmt.allocPrint(allocator, "Something", .{}) } };
 }
