@@ -7,7 +7,7 @@ function readDoc(url: string): Doc | Error {
   return (
     url.match("fail") ? Error("Failed to read document") :
     url.match("headless") ? {} :
-    url.match("empty") ? { head: { title: "" } } :
+    url.match("untitled") ? { head: { title: "" } } :
     { head: { title: "Something" } }
   );
 }
@@ -39,7 +39,7 @@ function readIfTitleNonEmpty(url: string): boolean | undefined | Error {
 }
 
 function main() {
-  for (const url of ["good", "empty", "headless", "fail"]) {
+  for (const url of ["good", "untitled", "headless", "fail"]) {
     console.log(`Checking "https://${url}/":`);
     console.log("  Report:", readAndBuildDocReport(url));
     const hasTitle = readIfTitleNonEmpty(url)

@@ -19,7 +19,7 @@ fn readDoc(allocator: Allocator, url: []const u8) !Doc {
         error.FailedRead
     else if (contains(u8, url, "headless"))
         Doc{ .head = null }
-    else if (contains(u8, url, "empty"))
+    else if (contains(u8, url, "untitled"))
         Doc{ .head = Head{ .title = null } }
     else
         Doc{ .head = Head{ .title = try std.fmt.allocPrint(allocator, "Something", .{}) } };
@@ -41,7 +41,7 @@ fn readAndBuildDocReport(allocator: Allocator, url: []const u8) DocReport {
 
 pub fn main() !void {
     const print = std.io.getStdOut().writer().print;
-    const urls = [_][]const u8{ "good", "empty", "headless", "fail" };
+    const urls = [_][]const u8{ "good", "untitled", "headless", "fail" };
     for (urls) |url| {
         // Treat each scrape independently for memory.
         var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);

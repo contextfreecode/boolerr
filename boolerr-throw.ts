@@ -9,7 +9,7 @@ function readDoc(url: string): Doc {
     // deno-fmt-ignore
     return (
       url.match("headless") ? {} :
-      url.match("empty") ? { head: { title: "" } } :
+      url.match("untitled") ? { head: { title: "" } } :
       { head: { title: "Something" } }
     );
   }
@@ -39,7 +39,7 @@ function readIfTitleNonEmpty(url: string): boolean | undefined {
 }
 
 function main() {
-  for (const url of ["good", "empty", "headless", "fail"]) {
+  for (const url of ["good", "untitled", "headless", "fail"]) {
     console.log(`Checking "https://${url}/":`);
     console.log("  Report:", readAndBuildDocReport(url));
     try {
