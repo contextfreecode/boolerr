@@ -1,6 +1,7 @@
 package main
 
 import "core:fmt"
+import "core:mem"
 import "core:strings"
 
 Doc :: struct {
@@ -26,13 +27,12 @@ read_doc :: proc(url: string) -> (result: Doc, err: Error) {
         err = .FailedRead
         return
     }
-    result = (
-        Doc {} if strings.contains(url, "head-missing") else
-        Doc {head = Head {}} if strings.contains(url, "title-missing") else
-        Doc {head = Head {title = ""}} if
+    result =
+        Doc{} if strings.contains(url, "head-missing") else
+        Doc{head = Head{}} if strings.contains(url, "title-missing") else
+        Doc{head = Head{title = fmt.aprint("")}} if
             strings.contains(url, "title-empty") else
-        Doc {head = Head {title = "Title of ..."}}
-    )
+        Doc{head = Head{title = fmt.aprint("Title of", url)}}
     return
 }
 
@@ -47,6 +47,10 @@ proc (url: string) -> (result: Maybe(bool), err: Error) {
 }
 
 main :: proc() {
+    tracking_allocator: mem.Tracking_Allocator
+    mem.tracking_allocator_init(&tracking_allocator, context.allocator)
+    defer mem.tracking_allocator_destroy(&tracking_allocator)
+    context.allocator = mem.tracking_allocator(&tracking_allocator)
     doc, err := read_doc("good")
     fmt.println("Doc:", doc)
 }
