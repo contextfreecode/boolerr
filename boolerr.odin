@@ -2,6 +2,7 @@ package main
 
 import "core:fmt"
 import "core:mem"
+import "core:mem/virtual"
 import "core:strings"
 
 Doc :: struct {
@@ -12,7 +13,7 @@ Head :: struct {
     title: Maybe(string),
 }
 
-DocReport :: struct {
+Doc_Report :: struct {
     title: Maybe(string),
     ok: bool,
 }
@@ -36,21 +37,53 @@ read_doc :: proc(url: string) -> (result: Doc, err: Error) {
     return
 }
 
-is_title_non_empty :: proc (doc: Doc) -> Maybe(bool) {
-    return len(doc.head.? or_return.title.? or_return) > 0
+build_doc_report :: proc(doc: Doc) -> Doc_Report {
+    return Doc_Report{
+        title = doc.head.?.title if doc.head != nil else nil,
+        ok = true,
+    };
+}
+
+read_and_build_doc_report :: proc(url: string) -> Doc_Report {
+    if doc, err := read_doc(url); err != nil {
+        return Doc_Report{}
+    } else {
+        return build_doc_report(doc)
+    }
+}
+
+is_title_non_empty :: proc(doc: Doc) -> Maybe(bool) {
+    if doc.head == nil || doc.head.?.title == nil {
+        return nil
+    }
+    // return len(doc.head.(Head).title.(string)) > 0
+    return len(doc.head.?.title.?) > 0
 }
 
 read_whether_title_non_empty ::
-proc (url: string) -> (result: Maybe(bool), err: Error) {
+proc(url: string) -> (result: Maybe(bool), err: Error) {
     result = is_title_non_empty(read_doc(url) or_return)
     return
 }
 
 main :: proc() {
-    tracking_allocator: mem.Tracking_Allocator
-    mem.tracking_allocator_init(&tracking_allocator, context.allocator)
-    defer mem.tracking_allocator_destroy(&tracking_allocator)
-    context.allocator = mem.tracking_allocator(&tracking_allocator)
-    doc, err := read_doc("good")
-    fmt.println("Doc:", doc)
+    // Prep arena.
+    arena: virtual.Growing_Arena
+    defer virtual.growing_arena_destroy(&arena)
+    context.allocator = virtual.growing_arena_allocator(&arena)
+    // Loop.
+    urls := []string{"good", "title-empty", "title-missing", "head-missing", "fail"}
+    for url in urls {
+        // Reset arena.
+        temp := virtual.growing_arena_temp_begin(&arena)
+        defer virtual.growing_arena_temp_end(temp)
+        // Scrape.
+        fmt.printf("Checking \"https://%v/\":\n", url)
+        fmt.println("  Report:", read_and_build_doc_report(url))
+        if has_title, err := read_whether_title_non_empty(url); err != nil {
+            fmt.println("  Has title:", err)
+        } else {
+            fmt.println("  Has title:", has_title, "vs", has_title.? or_else false)
+        }
+    }
 }
