@@ -1,4 +1,4 @@
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 struct Unit(());
 const UNIT: Unit = Unit(());
 impl From<&Unit> for Unit {
@@ -15,6 +15,12 @@ fn bool_of(condition: bool) -> Bool {
         Ok(UNIT)
     } else {
         Err(UNIT)
+    }
+}
+fn not(condition: Bool) -> Bool {
+    match condition {
+        TRUE => FALSE,
+        FALSE => TRUE,
     }
 }
 
@@ -86,8 +92,7 @@ fn read_and_build_doc_report(url: &str) -> DocReport {
 }
 
 fn is_title_non_empty(doc: &Doc) -> Opt<Bool> {
-    // TODO How to say `not`?
-    Ok(bool_of(doc.head.as_ref()?.title.as_ref()?.is_empty()))
+    Ok(not(bool_of(doc.head.as_ref()?.title.as_ref()?.is_empty())))
 }
 
 fn read_whether_title_non_empty(url: &str) -> Result<Opt<Bool>, String> {
