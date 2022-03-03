@@ -30,6 +30,9 @@ fun readAndBuildDocReport(url: String): DocReport {
 fun isTitleNonEmpty(doc: Doc): Boolean? = doc.head?.title?.isNotEmpty()
 
 fun readWhetherTitleNonEmpty(url: String): Result<Boolean?> =
+    // Result.success(
+    //     isTitleNonEmpty(readDoc(url).getOrElse { return Result.failure(it) })
+    // )
     readDoc(url).map { isTitleNonEmpty(it) }
 
 fun main() {

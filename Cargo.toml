@@ -3,9 +3,14 @@ name = "boolerr"
 version = "0.1.0"
 authors = ["Tom <tom@contextfree.info>"]
 edition = "2021"
+default-run = "boolerr"
 
 [dependencies]
 
 [[bin]]
 name = "boolerr"
 path = "boolerr.rs"
+
+[[bin]]
+name = "boolerr-bonus"
+path = "boolerr-bonus.rs"
