@@ -3,8 +3,8 @@ struct Unit(());
 const UNIT: Unit = Unit(());
 
 type Bool = Result<Unit, Unit>;
-type Opt<T> = Result<T, Unit>;
-
+const TRUE: Bool = Bool::Ok(UNIT);
+const FALSE: Bool = Bool::Err(UNIT);
 fn bool_of(condition: bool) -> Bool {
     if condition {
         Ok(UNIT)
@@ -13,8 +13,7 @@ fn bool_of(condition: bool) -> Bool {
     }
 }
 
-const TRUE: Bool = Bool::Ok(UNIT);
-const FALSE: Bool = Bool::Err(UNIT);
+type Opt<T> = Result<T, Unit>;
 fn none<T>() -> Opt<T> {
     Err(UNIT)
 }
@@ -26,7 +25,6 @@ impl From<&Unit> for Unit {
 }
 
 struct Doc {
-    // TODO Should these all be optional pointers across languages???
     head: Opt<Head>,
 }
 
