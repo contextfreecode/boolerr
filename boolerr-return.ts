@@ -27,6 +27,10 @@ function readAndBuildDocReport(url: string): DocReport {
   }
 }
 
+function titledReport(report: DocReport): DocReport {
+  return { ...report, title: report.title || "" };
+}
+
 function isTitleNonEmpty(doc: Doc): boolean | undefined {
   const title = doc.head?.title;
   // return title === undefined ? undefined : !!title;
@@ -43,7 +47,9 @@ function main() {
   const urls = ["good", "title-empty", "title-missing", "head-missing", "fail"];
   for (const url of urls) {
     console.log(`Checking "https://${url}/":`);
-    console.log("  Report:", readAndBuildDocReport(url));
+    const report = readAndBuildDocReport(url);
+    console.log("  Report:", report);
+    console.log("  Titled:", titledReport(report));
     const hasTitle = readWhetherTitleNonEmpty(url);
     console.log(`  Has title: ${hasTitle} vs ${hasTitle || false}`);
   }
