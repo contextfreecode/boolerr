@@ -1,6 +1,11 @@
 #[derive(Clone, Copy, Debug)]
 struct Unit(());
 const UNIT: Unit = Unit(());
+impl From<&Unit> for Unit {
+    fn from(_: &Unit) -> Unit {
+        UNIT
+    }
+}
 
 type Bool = Result<Unit, Unit>;
 const TRUE: Bool = Bool::Ok(UNIT);
@@ -16,12 +21,6 @@ fn bool_of(condition: bool) -> Bool {
 type Opt<T> = Result<T, Unit>;
 fn none<T>() -> Opt<T> {
     Err(UNIT)
-}
-
-impl From<&Unit> for Unit {
-    fn from(_: &Unit) -> Unit {
-        UNIT
-    }
 }
 
 struct Doc {
