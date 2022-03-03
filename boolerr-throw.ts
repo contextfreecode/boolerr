@@ -1,6 +1,6 @@
 type Doc = { head?: Head };
 type Head = { title?: string };
-type DocReport = { title: string | undefined; ok: boolean };
+type Summary = { title: string | undefined; ok: boolean };
 
 function throwError(message: string): never {
   throw Error(message);
@@ -17,21 +17,21 @@ function readDoc(url: string): Doc {
   );
 }
 
-function buildDocReport(doc: Doc): DocReport {
+function buildSummary(doc: Doc): Summary {
   // return { title: doc.head && doc.head.title, ok: true };
   return { title: doc.head?.title, ok: true };
 }
 
-function readAndBuildDocReport(url: string): DocReport {
+function readAndBuildSummary(url: string): Summary {
   try {
-    return buildDocReport(readDoc(url));
+    return buildSummary(readDoc(url));
   } catch {
     return { title: undefined, ok: false };
   }
 }
 
-function titledReport(report: DocReport): DocReport {
-  return { ...report, title: report.title || "" };
+function titledSummary(summary: Summary): Summary {
+  return { ...summary, title: summary.title || "" };
 }
 
 function isTitleNonEmpty(doc: Doc): boolean | undefined {
@@ -48,9 +48,9 @@ function main() {
   const urls = ["good", "title-empty", "title-missing", "head-missing", "fail"];
   for (const url of urls) {
     console.log(`Checking "https://${url}/":`);
-    const report = readAndBuildDocReport(url);
-    console.log("  Report:", report);
-    console.log("  Titled:", titledReport(report));
+    const summary = readAndBuildSummary(url);
+    console.log("  Summary:", summary);
+    console.log("  Titled: ", titledSummary(summary));
     try {
       const hasTitle = readWhetherTitleNonEmpty(url);
       console.log(`  Has title: ${hasTitle} vs ${hasTitle || false}`);

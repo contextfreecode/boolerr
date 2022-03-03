@@ -1,6 +1,6 @@
 data class Doc(val head: Head?)
 data class Head(val title: String?)
-data class DocReport(val title: String?, val ok: Boolean)
+data class Summary(val title: String?, val ok: Boolean)
 
 fun readDoc(url: String): Result<Doc> = when {
     "fail" in url -> Result.failure(Exception("Failed to read document"))
@@ -14,17 +14,17 @@ fun readDoc(url: String): Result<Doc> = when {
     )
 }
 
-fun buildDocReport(doc: Doc) = DocReport(title = doc.head?.title, ok = true)
+fun buildSummary(doc: Doc) = Summary(title = doc.head?.title, ok = true)
 
-fun readAndBuildDocReport(url: String): DocReport {
-    return buildDocReport(
-        readDoc(url).getOrElse { return DocReport(title = null, ok = false) }
+fun readAndBuildSummary(url: String): Summary {
+    return buildSummary(
+        readDoc(url).getOrElse { return Summary(title = null, ok = false) }
     )
 }
 
-// fun readAndBuildDocReport(url: String): DocReport = readDoc(url).fold(
-//     onSuccess = { buildDocReport(it) },
-//     onFailure = { DocReport(title = null, ok = false) },
+// fun readAndBuildSummary(url: String): Summary = readDoc(url).fold(
+//     onSuccess = { buildSummary(it) },
+//     onFailure = { Summary(title = null, ok = false) },
 // )
 
 fun isTitleNonEmpty(doc: Doc): Boolean? = doc.head?.title?.isNotEmpty()
@@ -41,7 +41,7 @@ fun main() {
     )
     for (url in urls) {
         println("""Checking "https://$url/":""")
-        println("  Report: ${readAndBuildDocReport(url)}")
+        println("  Summary: ${readAndBuildSummary(url)}")
         val hasTitle = readWhetherTitleNonEmpty(url);
         println("  Has title: $hasTitle vs ${
             hasTitle.getOrDefault(false) ?: false

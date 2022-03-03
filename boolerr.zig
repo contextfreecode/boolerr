@@ -3,11 +3,11 @@ const Allocator = std.mem.Allocator;
 
 const Doc = struct { head: ?Head };
 const Head = struct { title: ?[]u8 };
-const DocReport = struct {
+const Summary = struct {
     title: ?[]u8,
     ok: bool,
     pub fn format(
-        self: DocReport,
+        self: Summary,
         comptime fmt: []const u8,
         options: std.fmt.FormatOptions,
         writer: anytype,
@@ -15,7 +15,7 @@ const DocReport = struct {
         _ = fmt;
         _ = options;
         // More general purpose option here by InKryption: https://zigbin.io/be9a52
-        try writer.writeAll("DocReport{ .title = ");
+        try writer.writeAll("Summary{ .title = ");
         try printOptionalString(writer, self.title);
         try writer.print(", .ok = {} }}", .{self.ok});
     }
@@ -46,18 +46,18 @@ fn readDoc(allocator: Allocator, url: []const u8) !Doc {
         Doc{ .head = Head{ .title = try std.fmt.allocPrint(allocator, "Title of {s}", .{url}) } };
 }
 
-fn buildDocReport(doc: Doc) DocReport {
-    return DocReport{
+fn buildSummary(doc: Doc) Summary {
+    return Summary{
         .title = if (doc.head) |head| head.title else null,
         .ok = true,
     };
 }
 
-fn readAndBuildDocReport(allocator: Allocator, url: []const u8) DocReport {
+fn readAndBuildSummary(allocator: Allocator, url: []const u8) Summary {
     const doc = readDoc(allocator, url) catch {
-        return DocReport{ .title = null, .ok = false };
+        return Summary{ .title = null, .ok = false };
     };
-    return buildDocReport(doc);
+    return buildSummary(doc);
 }
 
 fn isTitleNonEmpty(doc: Doc) ?bool {
@@ -79,7 +79,7 @@ pub fn main() !void {
         const allocator = arena.allocator();
         // Scrape.
         try print("Checking \"https://{s}/\":\n", .{url});
-        try print("  Report: {}\n", .{readAndBuildDocReport(allocator, url)});
+        try print("  Summary: {}\n", .{readAndBuildSummary(allocator, url)});
         const has_title = readWhetherTitleNonEmpty(allocator, url) catch |err| {
             try print("  Has title: {}\n", .{err});
             continue; // `noreturn` vs `never` vs `!` (never) vs `Nothing`

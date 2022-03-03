@@ -38,7 +38,7 @@ struct Head {
 
 #[allow(dead_code)] // not really dead because debug printing
 #[derive(Debug)]
-struct DocReport {
+struct Summary {
     title: Opt<String>,
     ok: Bool,
 }
@@ -72,17 +72,17 @@ fn read_doc(url: &str) -> Result<Doc, String> {
         })
 }
 
-fn build_doc_report(doc: Doc) -> DocReport {
-    DocReport {
+fn build_summary(doc: Doc) -> Summary {
+    Summary {
         title: doc.head.and_then(|it| it.title),
         ok: TRUE,
     }
 }
 
-fn read_and_build_doc_report(url: &str) -> DocReport {
+fn read_and_build_summary(url: &str) -> Summary {
     match read_doc(url) {
-        Ok(doc) => build_doc_report(doc),
-        Err(_) => DocReport {
+        Ok(doc) => build_summary(doc),
+        Err(_) => Summary {
             title: none(),
             ok: FALSE,
         },
@@ -107,7 +107,7 @@ fn main() {
     ];
     for url in urls {
         println!(r#"Checking "https://{}/":"#, url);
-        println!("  Report: {:?}", read_and_build_doc_report(url));
+        println!("  Summary: {:?}", read_and_build_summary(url));
         let has_title = read_whether_title_non_empty(url);
         println!(
             "  Has title: {:?} vs {:?}",

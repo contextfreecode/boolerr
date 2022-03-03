@@ -13,7 +13,7 @@ Head :: struct {
     title: Maybe(string),
 }
 
-Doc_Report :: struct {
+Summary :: struct {
     title: Maybe(string),
     ok: bool,
 }
@@ -37,18 +37,18 @@ read_doc :: proc(url: string) -> (result: Doc, err: Error) {
     return
 }
 
-build_doc_report :: proc(doc: Doc) -> Doc_Report {
-    return Doc_Report{
+build_summary :: proc(doc: Doc) -> Summary {
+    return Summary{
         title = doc.head.?.title if doc.head != nil else nil,
         ok = true,
     };
 }
 
-read_and_build_doc_report :: proc(url: string) -> Doc_Report {
+read_and_build_summary :: proc(url: string) -> Summary {
     if doc, err := read_doc(url); err != nil {
-        return Doc_Report{}
+        return Summary{}
     } else {
-        return build_doc_report(doc)
+        return build_summary(doc)
     }
 }
 
@@ -79,7 +79,7 @@ main :: proc() {
         defer virtual.growing_arena_temp_end(temp)
         // Scrape.
         fmt.printf("Checking \"https://%v/\":\n", url)
-        fmt.println("  Report:", read_and_build_doc_report(url))
+        fmt.println("  Summary:", read_and_build_summary(url))
         if has_title, err := read_whether_title_non_empty(url); err != nil {
             fmt.println("  Has title:", err)
         } else {
