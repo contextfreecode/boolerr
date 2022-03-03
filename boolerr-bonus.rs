@@ -13,7 +13,7 @@ fn bool_of(condition: bool) -> Bool {
     }
 }
 
-// const TRUE: Bool = Bool::Ok(Unit);
+const TRUE: Bool = Bool::Ok(UNIT);
 const FALSE: Bool = Bool::Err(UNIT);
 fn none<T>() -> Opt<T> {
     Err(UNIT)
@@ -38,7 +38,7 @@ struct Head {
 #[derive(Debug)]
 struct DocReport {
     title: Opt<String>,
-    ok: bool,
+    ok: Bool,
 }
 
 fn read_doc(url: &str) -> Result<Doc, String> {
@@ -74,7 +74,7 @@ fn build_doc_report(doc: Doc) -> DocReport {
     // return { title: doc.head && doc.head.title, ok: true };
     DocReport {
         title: doc.head.and_then(|it| it.title),
-        ok: true,
+        ok: TRUE,
     }
 }
 
@@ -83,7 +83,7 @@ fn read_and_build_doc_report(url: &str) -> DocReport {
         Ok(doc) => build_doc_report(doc),
         Err(_) => DocReport {
             title: none(),
-            ok: false,
+            ok: FALSE,
         },
     }
 }
