@@ -37,7 +37,6 @@ fn read_doc(url: &str) -> Result<Doc, String> {
 }
 
 fn build_doc_report(doc: Doc) -> DocReport {
-    // return { title: doc.head && doc.head.title, ok: true };
     DocReport {
         title: doc.head.and_then(|it| it.title),
         ok: true,
