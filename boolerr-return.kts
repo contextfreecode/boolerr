@@ -22,6 +22,11 @@ fun readAndBuildDocReport(url: String): DocReport {
     )
 }
 
+// fun readAndBuildDocReport(url: String): DocReport = readDoc(url).fold(
+//     onSuccess = { buildDocReport(it) },
+//     onFailure = { DocReport(title = null, ok = false) },
+// )
+
 fun isTitleNonEmpty(doc: Doc): Boolean? = doc.head?.title?.isNotEmpty()
 
 fun readWhetherTitleNonEmpty(url: String): Result<Boolean?> =
