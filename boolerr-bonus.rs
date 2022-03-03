@@ -11,10 +11,9 @@ type Bool = Result<Unit, Unit>;
 const TRUE: Bool = Bool::Ok(UNIT);
 const FALSE: Bool = Bool::Err(UNIT);
 fn bool_of(condition: bool) -> Bool {
-    if condition {
-        Ok(UNIT)
-    } else {
-        Err(UNIT)
+    match condition {
+        true => TRUE,
+        false => FALSE,
     }
 }
 fn not(condition: Bool) -> Bool {
