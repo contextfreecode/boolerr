@@ -14,11 +14,9 @@ fun buildDocReport(doc: Doc) = DocReport(title = doc.head?.title, ok = true)
 
 fun readAndBuildDocReport(url: String): DocReport {
     return buildDocReport(
-        try {
-            readDoc(url)
-        } catch (err: Exception) {
+        try { readDoc(url) } catch (err: Exception) {
             return DocReport(title = null, ok = false)
-        },
+        }
     )
 }
 
@@ -35,8 +33,8 @@ fun main() {
         println("""Checking "https://$url/":""")
         println("  Report: ${readAndBuildDocReport(url)}")
         try {
-            val hasTitle = readWhetherTitleNonEmpty(url);
-            println("  Has title: $hasTitle vs ${hasTitle ?: false}");
+            val hasTitle = readWhetherTitleNonEmpty(url)
+            println("  Has title: $hasTitle vs ${hasTitle ?: false}")
         } catch (err: Exception) {
             println("  Has title: $err");
         }

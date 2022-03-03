@@ -1,4 +1,5 @@
 struct Doc {
+    // TODO Should these all be optional pointers across languages???
     head: Option<Head>,
 }
 
@@ -16,19 +17,21 @@ struct DocReport {
 fn read_doc(url: &str) -> Result<Doc, String> {
     match () {
         _ if url.contains("fail") => Err("Failed to read document".into()),
-        _ if url.contains("head-missing") => Ok(Doc { head: None }),
-        _ if url.contains("title-missing") => Ok(Doc {
-            head: Some(Head { title: None }),
-        }),
-        _ if url.contains("title-empty") => Ok(Doc {
-            head: Some(Head {
-                title: Some("".into()),
-            }),
-        }),
-        _ => Ok(Doc {
-            head: Some(Head {
-                title: Some(format!("Title of {url}")),
-            }),
+        _ => Ok(match () {
+            _ if url.contains("head-missing") => Doc { head: None },
+            _ if url.contains("title-missing") => Doc {
+                head: Some(Head { title: None }),
+            },
+            _ if url.contains("title-empty") => Doc {
+                head: Some(Head {
+                    title: Some("".into()),
+                }),
+            },
+            _ => Doc {
+                head: Some(Head {
+                    title: Some(format!("Title of {url}")),
+                }),
+            },
         }),
     }
 }
