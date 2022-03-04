@@ -30,10 +30,6 @@ function readAndBuildSummary(url: string): Summary {
   }
 }
 
-function titledSummary(summary: Summary): Summary {
-  return { ...summary, title: summary.title || "" };
-}
-
 function isTitleNonEmpty(doc: Doc): boolean | undefined {
   const title = doc.head?.title;
   // return title === undefined ? undefined : !!title;
@@ -50,12 +46,12 @@ function main() {
     console.log(`Checking "https://${url}/":`);
     const summary = readAndBuildSummary(url);
     console.log("  Summary:", summary);
-    console.log("  Titled: ", titledSummary(summary));
+    console.log("  Title: ", summary.title || "");
     try {
       const hasTitle = readWhetherTitleNonEmpty(url);
       console.log(`  Has title: ${hasTitle} vs ${hasTitle || false}`);
     } catch (error) {
-      console.log(`  Has title: ${error}`);
+      console.log(`  Has title: ${error} vs ${false}`);
     }
   }
 }

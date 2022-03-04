@@ -16,16 +16,9 @@ const Summary = struct {
         _ = options;
         // More general purpose option here by InKryption: https://zigbin.io/be9a52
         try writer.writeAll("Summary{ .title = ");
-        try printOptionalString(writer, self.title);
-        try writer.print(", .ok = {} }}", .{self.ok});
+        try writer.print("{s}, .ok = {} }}", .{self.title, self.ok});
     }
 };
-
-fn printOptionalString(writer: anytype, text: ?[]u8) !void {
-    if (text != null) try writer.writeByte('"');
-    try writer.print("{s}", .{text});
-    if (text != null) try writer.writeByte('"');
-}
 
 const Error = error{FailedRead};
 
@@ -79,9 +72,12 @@ pub fn main() !void {
         const allocator = arena.allocator();
         // Scrape.
         try print("Checking \"https://{s}/\":\n", .{url});
-        try print("  Summary: {}\n", .{readAndBuildSummary(allocator, url)});
+        const summary = readAndBuildSummary(allocator, url);
+        try print("  Summary: {}\n", .{summary});
+        const title_sure = summary.title orelse "";
+        try print("  Title: {s}\n", .{title_sure});
         const has_title = readWhetherTitleNonEmpty(allocator, url) catch |err| {
-            try print("  Has title: {}\n", .{err});
+            try print("  Has title: {} vs {}\n", .{err, false});
             continue; // `noreturn` vs `never` vs `!` (never) vs `Nothing`
         };
         const has_title_bool = has_title orelse false;

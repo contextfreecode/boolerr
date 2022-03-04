@@ -31,13 +31,17 @@ fun main() {
     )
     for (url in urls) {
         println("""Checking "https://$url/":""")
-        println("  Summary: ${readAndBuildSummary(url)}")
-        try {
-            val hasTitle = readWhetherTitleNonEmpty(url)
-            println("  Has title: $hasTitle vs ${hasTitle ?: false}")
-        } catch (err: Exception) {
-            println("  Has title: $err");
+        val summary = readAndBuildSummary(url);
+        println("  Summary: $summary")
+        println("  Title: ${summary.title ?: ""}")
+        val hasTitle = try {
+            readWhetherTitleNonEmpty(url)
+        } catch (err: Exception) { err }
+        val hasTitleSure = when (hasTitle) {
+            is Exception -> false
+            else -> hasTitle ?: false
         }
+        println("  Has title: $hasTitle vs ${hasTitleSure}")
     }
 }
 

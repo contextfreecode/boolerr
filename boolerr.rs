@@ -71,18 +71,17 @@ fn main() {
     ];
     for url in urls {
         println!(r#"Checking "https://{}/":"#, url);
-        println!("  Summary: {:?}", read_and_build_summary(url));
+        let summary = read_and_build_summary(url);
+        println!("  Summary: {summary:?}");
+        let title_sure = summary.title.unwrap_or_else(|| "".into());
+        println!("  Title: {title_sure:?}");
         let has_title = read_whether_title_non_empty(url);
-        println!(
-            "  Has title: {:?} vs {:?}",
-            &has_title,
-            has_title
-                .as_ref()
-                // .map(|it| it.unwrap_or(false))
-                // .unwrap_or(false),
-                .unwrap_or(&Some(false))
-                // .unwrap_or_else(|_| &Some(false))
-                .unwrap_or(false),
-        );
+        let has_title_sure = has_title
+            .as_ref()
+            // .map(|it| it.unwrap_or(false))
+            // .unwrap_or(false);
+            .unwrap_or(&Some(false))
+            .unwrap_or(false);
+        println!("  Has title: {has_title:?} vs {has_title_sure:?}");
     }
 }

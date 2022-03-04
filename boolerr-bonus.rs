@@ -45,7 +45,7 @@ struct Summary {
 
 fn read_doc(url: &str) -> Result<Doc, String> {
     bool_of(url.contains("fail"))
-        .map(|_| Err::<Doc, String>("Failed to read document".into()))
+        .map(|_| Err("Failed to read document".into()))
         .or_else(|_| bool_of(url.contains("head-missing")).map(|_| Ok(Doc { head: none() })))
         .or_else(|_| {
             bool_of(url.contains("title-missing")).map(|_| {
@@ -97,6 +97,11 @@ fn read_whether_title_non_empty(url: &str) -> Result<Opt<Bool>, String> {
     Ok(is_title_non_empty(&read_doc(url)?))
 }
 
+fn opt_str(text: &str) -> Opt<&str> {
+    not(bool_of(text.is_empty()))?; // see also Try trait
+    Ok(text)
+}
+
 fn main() {
     let urls = [
         "good",
@@ -107,18 +112,18 @@ fn main() {
     ];
     for url in urls {
         println!(r#"Checking "https://{}/":"#, url);
-        println!("  Summary: {:?}", read_and_build_summary(url));
+        let summary = read_and_build_summary(url);
+        println!("  Summary: {summary:?}");
+        let title_sure = summary.title.unwrap_or_else(|_| "".into());
+        println!("  Title: {title_sure:?}");
         let has_title = read_whether_title_non_empty(url);
-        println!(
-            "  Has title: {:?} vs {:?}",
-            &has_title,
-            has_title
-                .as_ref()
-                // .map(|it| it.unwrap_or(FALSE))
-                // .unwrap_or(FALSE),
-                .unwrap_or(&Ok(FALSE))
-                // .unwrap_or_else(|_| &Ok(FALSE))
-                .unwrap_or(FALSE),
-        );
-    }
+        let has_title_sure = has_title
+            .as_ref()
+            // .map(|it| it.unwrap_or(FALSE))
+            // .unwrap_or(FALSE);
+            .unwrap_or(&Ok(FALSE))
+            .unwrap_or(FALSE);
+            println!("  Has title: {has_title:?} vs {has_title_sure:?}");
+        }
+    println!("Opt: {:?}, {:?}", opt_str(""), opt_str("Bye, y'all."));
 }
