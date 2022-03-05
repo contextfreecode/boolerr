@@ -19,7 +19,7 @@ const Summary = struct {
     }
 };
 
-const Error = error{FailedRead};
+const Error = error{BadRead};
 
 fn contains(comptime T: type, haystack: []const T, needle: []const T) bool {
     return std.mem.indexOf(u8, haystack, needle) != null;
@@ -27,7 +27,7 @@ fn contains(comptime T: type, haystack: []const T, needle: []const T) bool {
 
 fn readDoc(allocator: Allocator, url: []const u8) !Doc {
     return if (contains(u8, url, "fail"))
-        error.FailedRead
+        error.BadRead
     else if (contains(u8, url, "head-missing"))
         Doc{ .head = null }
     else if (contains(u8, url, "title-missing"))

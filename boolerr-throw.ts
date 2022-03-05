@@ -46,7 +46,7 @@ function main() {
     console.log(`Checking "https://${url}/":`);
     const summary = readAndBuildSummary(url);
     console.log("  Summary:", summary);
-    console.log("  Title: ", summary.title || "");
+    console.log("  Title:", summary.title || "");
     try {
       const hasTitle = readWhetherTitleNonEmpty(url);
       console.log(`  Has title: ${hasTitle} vs ${hasTitle || false}`);

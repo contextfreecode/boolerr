@@ -49,7 +49,7 @@ function main() {
     console.log(`Checking "https://${url}/":`);
     const summary = readAndBuildSummary(url);
     console.log("  Summary:", summary);
-    console.log("  Title: ", summary.title || "");
+    console.log("  Title:", summary.title || "");
     const hasTitle = readWhetherTitleNonEmpty(url);
     const hasTitleSure = hasTitle instanceof Error ? false : hasTitle || false;
     console.log(`  Has title: ${hasTitle} vs ${hasTitleSure}`);
