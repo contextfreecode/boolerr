@@ -29,7 +29,10 @@ readDoc url =
                 | isInfixOf "title-empty" url ->
                     Doc {head = Just Head {title = Just ""}}
                 | otherwise ->
-                    Doc {head = Just Head {title = Just $ printf "Title of %s" url}}
+                    Doc
+                      { head =
+                          Just Head {title = Just $ printf "Title of %s" url}
+                      }
 
 buildSummary :: Doc -> Summary
 buildSummary doc =
