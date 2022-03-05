@@ -71,6 +71,7 @@ main = do
     putStrLn $ printf "  Title: %s" $ fromMaybe "" summary.title
     -- Has title.
     let hasTitle = readWhetherTitleNonEmpty url
+    -- let hasTitleSure = either (const False) id $ fromMaybe False <$> hasTitle
     let hasTitleSure = fromMaybe False $ either (const Nothing) id hasTitle
     putStrLn $
       printf "  Has title: %s vs %s" (show hasTitle) (show hasTitleSure)
