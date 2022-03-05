@@ -60,6 +60,7 @@ fn is_title_non_empty(doc: &Doc) -> Option<bool> {
 }
 
 fn read_whether_title_non_empty(url: &str) -> Result<Option<bool>, Error> {
+    // read_doc(url).map(|doc| is_title_non_empty(&doc))
     Ok(is_title_non_empty(&read_doc(url)?))
 }
 
