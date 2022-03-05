@@ -77,7 +77,7 @@ pub fn main() !void {
         try print("  Title: {s}\n", .{title_sure});
         const has_title = readWhetherTitleNonEmpty(allocator, url) catch |err| {
             try print("  Has title: {} vs {}\n", .{ err, false });
-            continue; // `noreturn` vs `never` vs `!` (never) vs `Nothing`
+            continue;
         };
         const has_title_bool = has_title orelse false;
         try print("  Has title: {} vs {}\n", .{ has_title, has_title_bool });
