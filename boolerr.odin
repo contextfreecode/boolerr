@@ -41,7 +41,7 @@ build_summary :: proc(doc: Doc) -> Summary {
     return Summary{
         title = doc.head.?.title if doc.head != nil else nil,
         ok = true,
-    };
+    }
 }
 
 read_and_build_summary :: proc(url: string) -> Summary {

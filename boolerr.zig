@@ -16,7 +16,7 @@ const Summary = struct {
         _ = options;
         // More general purpose option here by InKryption: https://zigbin.io/be9a52
         try writer.writeAll("Summary{ .title = ");
-        try writer.print("{s}, .ok = {} }}", .{self.title, self.ok});
+        try writer.print("{s}, .ok = {} }}", .{ self.title, self.ok });
     }
 };
 
@@ -77,7 +77,7 @@ pub fn main() !void {
         const title_sure = summary.title orelse "";
         try print("  Title: {s}\n", .{title_sure});
         const has_title = readWhetherTitleNonEmpty(allocator, url) catch |err| {
-            try print("  Has title: {} vs {}\n", .{err, false});
+            try print("  Has title: {} vs {}\n", .{ err, false });
             continue; // `noreturn` vs `never` vs `!` (never) vs `Nothing`
         };
         const has_title_bool = has_title orelse false;

@@ -41,12 +41,12 @@ fun main() {
     )
     for (url in urls) {
         println("""Checking "https://$url/":""")
-        val summary = readAndBuildSummary(url);
+        val summary = readAndBuildSummary(url)
         println("  Summary: $summary")
         println("  Title: ${summary.title ?: ""}")
-        val hasTitle = readWhetherTitleNonEmpty(url);
+        val hasTitle = readWhetherTitleNonEmpty(url)
         val hasTitleSure = hasTitle.getOrDefault(false) ?: false
-        println("  Has title: $hasTitle vs $hasTitleSure");
+        println("  Has title: $hasTitle vs $hasTitleSure")
     }
 }
 

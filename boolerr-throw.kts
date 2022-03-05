@@ -31,7 +31,7 @@ fun main() {
     )
     for (url in urls) {
         println("""Checking "https://$url/":""")
-        val summary = readAndBuildSummary(url);
+        val summary = readAndBuildSummary(url)
         println("  Summary: $summary")
         println("  Title: ${summary.title ?: ""}")
         val hasTitle = try {
@@ -41,7 +41,7 @@ fun main() {
             is Exception -> false
             else -> hasTitle ?: false
         }
-        println("  Has title: $hasTitle vs ${hasTitleSure}")
+        println("  Has title: $hasTitle vs $hasTitleSure")
     }
 }
 
