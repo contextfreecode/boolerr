@@ -28,6 +28,8 @@ fn none<T>() -> Opt<T> {
     Err(UNIT)
 }
 
+type Error = String;
+
 struct Doc {
     head: Opt<Head>,
 }
@@ -43,7 +45,7 @@ struct Summary {
     ok: Bool,
 }
 
-fn read_doc(url: &str) -> Result<Doc, String> {
+fn read_doc(url: &str) -> Result<Doc, Error> {
     bool_of(url.contains("fail"))
         .map(|_| Err("Failed to read document".into()))
         .or_else(|_| bool_of(url.contains("head-missing")).map(|_| Ok(Doc { head: none() })))
@@ -93,7 +95,7 @@ fn is_title_non_empty(doc: &Doc) -> Opt<Bool> {
     Ok(not(bool_of(doc.head.as_ref()?.title.as_ref()?.is_empty())))
 }
 
-fn read_whether_title_non_empty(url: &str) -> Result<Opt<Bool>, String> {
+fn read_whether_title_non_empty(url: &str) -> Result<Opt<Bool>, Error> {
     Ok(is_title_non_empty(&read_doc(url)?))
 }
 
@@ -123,7 +125,7 @@ fn main() {
             // .unwrap_or(FALSE);
             .unwrap_or(&Ok(FALSE))
             .unwrap_or(FALSE);
-            println!("  Has title: {has_title:?} vs {has_title_sure:?}");
-        }
+        println!("  Has title: {has_title:?} vs {has_title_sure:?}");
+    }
     println!("Opt: {:?}, {:?}", opt_str(""), opt_str("Bye, y'all."));
 }

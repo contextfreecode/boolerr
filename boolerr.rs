@@ -1,3 +1,5 @@
+type Error = String;
+
 struct Doc {
     // TODO Should these all be optional pointers across languages???
     head: Option<Head>,
@@ -14,7 +16,7 @@ struct Summary {
     ok: bool,
 }
 
-fn read_doc(url: &str) -> Result<Doc, String> {
+fn read_doc(url: &str) -> Result<Doc, Error> {
     match () {
         _ if url.contains("fail") => Err("Failed to read document".into()),
         _ => Ok(match () {
@@ -57,7 +59,7 @@ fn is_title_non_empty(doc: &Doc) -> Option<bool> {
     Some(!doc.head.as_ref()?.title.as_ref()?.is_empty())
 }
 
-fn read_whether_title_non_empty(url: &str) -> Result<Option<bool>, String> {
+fn read_whether_title_non_empty(url: &str) -> Result<Option<bool>, Error> {
     Ok(is_title_non_empty(&read_doc(url)?))
 }
 

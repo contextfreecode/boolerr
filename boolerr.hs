@@ -4,17 +4,19 @@
 {-# LANGUAGE OverloadedRecordUpdate #-}
 
 import Control.Monad (forM_)
-import Data.Functor ((<&>))
 import Data.List (isInfixOf)
+import Data.Maybe (fromMaybe)
 import Text.Printf (printf)
+
+type Error = String
 
 data Doc = Doc {head :: Maybe Head} deriving (Show)
 
-data Head = Head {title :: Maybe String} deriving (Show)
+data Head = Head {title :: Maybe Error} deriving (Show)
 
-data Summary = Summary {title :: Maybe String, ok :: Bool} deriving (Show)
+data Summary = Summary {title :: Maybe Error, ok :: Bool} deriving (Show)
 
-readDoc :: String -> Either String Doc
+readDoc :: Error -> Either Error Doc
 readDoc url =
   if
       | isInfixOf "fail" url -> Left "Failed to read document"
@@ -33,15 +35,37 @@ buildSummary :: Doc -> Summary
 buildSummary doc =
   Summary {title = doc.head >>= (.title), ok = True}
 
-readAndBuildSummary :: String -> Summary
+readAndBuildSummary :: Error -> Summary
 readAndBuildSummary url = case readDoc url of
   Left err -> Summary {title = Nothing, ok = True}
   Right doc -> buildSummary doc
+
+isTitleNonEmpty :: Doc -> Maybe Bool
+isTitleNonEmpty doc = do
+  head <- doc.head
+  title <- head.title
+  return $ not $ null title
+
+isTitleNonEmpty' :: Doc -> Maybe Bool
+isTitleNonEmpty' doc = not <$> null <$> (doc.head >>= (.title))
+
+readWhetherTitleNonEmpty :: Error -> Either Error (Maybe Bool)
+readWhetherTitleNonEmpty url = do
+  doc <- readDoc url
+  return $ isTitleNonEmpty doc
+
+readWhetherTitleNonEmpty' :: Error -> Either Error (Maybe Bool)
+readWhetherTitleNonEmpty' url = isTitleNonEmpty <$> readDoc url
 
 main :: IO ()
 main = do
   let urls = ["good", "title-empty", "title-missing", "head-missing", "fail"]
   forM_ urls $ \url -> do
-    putStrLn $ printf "Checking \"%s\":" url
-    let summary = readDoc url
+    putStrLn $ printf "Checking \"https://%s/\":" url
+    let summary = readAndBuildSummary url
     putStrLn $ printf "  Summary: %s" $ show summary
+    putStrLn $ printf "  Title: %s" $ fromMaybe "" summary.title
+    let hasTitle = readWhetherTitleNonEmpty url
+    let hasTitleSure = fromMaybe False $ either (const Nothing) id hasTitle
+    putStrLn $
+      printf "  Has title: %s vs %s" (show hasTitle) (show hasTitleSure)
