@@ -16,7 +16,11 @@ data Doc = Doc {head :: Maybe Head}
 
 data Head = Head {title :: Maybe String}
 
-data Summary = Summary {title :: Maybe String, ok :: Bool} deriving (Show)
+data Summary = Summary
+  { title :: Maybe String,
+    ok :: Bool
+  }
+  deriving (Show)
 
 -- readDoc
 

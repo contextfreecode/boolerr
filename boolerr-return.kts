@@ -1,6 +1,9 @@
 data class Doc(val head: Head?)
 data class Head(val title: String?)
-data class Summary(val title: String?, val ok: Boolean)
+data class Summary(
+    val title: String?,
+    val ok: Boolean,
+)
 
 fun readDoc(url: String): Result<Doc> = when {
     "fail" in url -> Result.failure(Exception("Bad read of $url"))

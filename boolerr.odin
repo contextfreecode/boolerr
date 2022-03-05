@@ -5,14 +5,8 @@ import "core:mem"
 import "core:mem/virtual"
 import "core:strings"
 
-Doc :: struct {
-	head: Maybe(Head),
-}
-
-Head :: struct {
-    title: Maybe(string),
-}
-
+Doc :: struct {head: Maybe(Head)}
+Head :: struct {title: Maybe(string)}
 Summary :: struct {
     title: Maybe(string),
     ok: bool,

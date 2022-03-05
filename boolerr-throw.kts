@@ -1,6 +1,9 @@
 data class Doc(val head: Head?)
 data class Head(val title: String?)
-data class Summary(val title: String?, val ok: Boolean)
+data class Summary(
+    val title: String?,
+    val ok: Boolean,
+)
 
 fun readDoc(url: String): Doc = when {
     // `never` vs `!` (never) vs `noreturn` vs `Nothing`
