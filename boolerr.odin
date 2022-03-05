@@ -18,15 +18,12 @@ Summary :: struct {
     ok: bool,
 }
 
-Err :: struct {
-    message: string,
-}
-
+Err :: distinct string
 Error :: Maybe(Err)
 
 read_doc :: proc(url: string) -> (result: Doc, err: Error) {
     if strings.contains(url, "fail") {
-        err = Err{message = fmt.aprint("Bad read of", url)}
+        err = Err(fmt.aprint("Bad read of", url))
         return
     }
     result =
