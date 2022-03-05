@@ -9,7 +9,7 @@ function throwError(message: string): never {
 function readDoc(url: string): Doc {
   // deno-fmt-ignore
   return (
-    url.match("fail") ? throwError("Failed to read document") :
+    url.match("fail") ? throwError(`Bad read of ${url}`) :
     url.match("head-missing") ? {} :
     url.match("title-missing") ? { head: { } } :
     url.match("title-empty") ? { head: { title: "" } } :

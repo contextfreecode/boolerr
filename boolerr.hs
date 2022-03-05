@@ -19,7 +19,7 @@ data Summary = Summary {title :: Maybe String, ok :: Bool} deriving (Show)
 readDoc :: String -> Either Error Doc
 readDoc url =
   if
-      | isInfixOf "fail" url -> Left $ Error "Failed to read document"
+      | isInfixOf "fail" url -> Left $ Error $ printf "Bad read of %s" url
       | otherwise ->
           Right $
             if

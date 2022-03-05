@@ -48,7 +48,7 @@ struct Summary {
 
 fn read_doc(url: &str) -> Result<Doc, Error> {
     bool_of(url.contains("fail"))
-        .map(|_| Err(Error("Failed to read document".into())))
+        .map(|_| Err(Error(format!("Bad read of {url}"))))
         .or_else(|_| bool_of(url.contains("head-missing")).map(|_| Ok(Doc { head: none() })))
         .or_else(|_| {
             bool_of(url.contains("title-missing")).map(|_| {

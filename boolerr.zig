@@ -15,8 +15,7 @@ const Summary = struct {
         _ = fmt;
         _ = options;
         // More general purpose option here by InKryption: https://zigbin.io/be9a52
-        try writer.writeAll("Summary{ .title = ");
-        try writer.print("{s}, .ok = {} }}", .{ self.title, self.ok });
+        try writer.print("Summary{{ .title = {s}, .ok = {} }}", .{ self.title, self.ok });
     }
 };
 

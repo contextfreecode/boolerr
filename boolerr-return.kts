@@ -3,7 +3,7 @@ data class Head(val title: String?)
 data class Summary(val title: String?, val ok: Boolean)
 
 fun readDoc(url: String): Result<Doc> = when {
-    "fail" in url -> Result.failure(Exception("Failed to read document"))
+    "fail" in url -> Result.failure(Exception("Bad read of $url"))
     else -> Result.success(
         when {
             "head-missing" in url -> Doc(head = null)

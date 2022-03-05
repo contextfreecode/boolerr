@@ -24,7 +24,7 @@ readDoc :: String -> IO (Either Error Doc)
 readDoc url =
   return
     if
-        | isInfixOf "fail" url -> Left $ Error "Failed to read document"
+        | isInfixOf "fail" url -> Left $ Error $ printf "Bad read of %s" url
         | otherwise ->
             Right $
               if

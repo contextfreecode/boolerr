@@ -5,7 +5,7 @@ type Summary = { title: string | undefined; ok: boolean };
 function readDoc(url: string): Doc | Error {
   // deno-fmt-ignore
   return (
-    url.match("fail") ? Error("Failed to read document") :
+    url.match("fail") ? Error(`Bad read of ${url}`) :
     url.match("head-missing") ? {} :
     url.match("title-missing") ? { head: { } } :
     url.match("title-empty") ? { head: { title: "" } } :

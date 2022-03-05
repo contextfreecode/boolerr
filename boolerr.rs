@@ -18,7 +18,7 @@ struct Summary {
 
 fn read_doc(url: &str) -> Result<Doc, Error> {
     match () {
-        _ if url.contains("fail") => Err(Error("Failed to read document".into())),
+        _ if url.contains("fail") => Err(Error(format!("Bad read of {url}"))),
         _ => Ok(match () {
             _ if url.contains("head-missing") => Doc { head: None },
             _ if url.contains("title-missing") => Doc {

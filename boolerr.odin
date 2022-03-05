@@ -18,14 +18,15 @@ Summary :: struct {
     ok: bool,
 }
 
-Error :: enum {
-    None,
-    FailedRead,
+Err :: struct {
+    message: string,
 }
+
+Error :: Maybe(Err)
 
 read_doc :: proc(url: string) -> (result: Doc, err: Error) {
     if strings.contains(url, "fail") {
-        err = .FailedRead
+        err = Err{message = fmt.aprint("Bad read of", url)}
         return
     }
     result =
