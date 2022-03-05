@@ -75,11 +75,12 @@ main :: proc() {
         // Reset arena.
         temp := virtual.growing_arena_temp_begin(&arena)
         defer virtual.growing_arena_temp_end(temp)
-        // Scrape.
+        // Summary.
         fmt.printf("Checking \"https://%v/\":\n", url)
         summary := read_and_build_summary(url)
         fmt.println("  Summary:", summary)
         fmt.println("  Title:", summary.title.? or_else "")
+        // Has title.
         if has_title, err := read_whether_title_non_empty(url); err != nil {
             fmt.println("  Has title:", err, "vs", false)
         } else {

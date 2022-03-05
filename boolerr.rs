@@ -73,10 +73,12 @@ fn main() {
     ];
     for url in urls {
         println!(r#"Checking "https://{}/":"#, url);
+        // Summary.
         let summary = read_and_build_summary(url);
         println!("  Summary: {summary:?}");
         let title_sure = summary.title.unwrap_or_else(|| "".into());
         println!("  Title: {title_sure:?}");
+        // Has title.
         let has_title = read_whether_title_non_empty(url);
         let has_title_sure = has_title
             .as_ref()

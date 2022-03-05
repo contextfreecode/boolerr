@@ -44,9 +44,11 @@ function main() {
   const urls = ["good", "title-empty", "title-missing", "head-missing", "fail"];
   for (const url of urls) {
     console.log(`Checking "https://${url}/":`);
+    // Summary.
     const summary = readAndBuildSummary(url);
     console.log("  Summary:", summary);
     console.log("  Title:", summary.title || "");
+    // Has title.
     try {
       const hasTitle = readWhetherTitleNonEmpty(url);
       console.log(`  Has title: ${hasTitle} vs ${hasTitle || false}`);

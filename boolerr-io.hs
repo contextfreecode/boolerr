@@ -104,9 +104,11 @@ main = do
   let urls = ["good", "title-empty", "title-missing", "head-missing", "fail"]
   forM_ urls $ \url -> do
     putStrLn $ printf "Checking \"https://%s/\":" url
+    -- Summary.
     summary <- readAndBuildSummary url
     putStrLn $ printf "  Summary: %s" $ show summary
     putStrLn $ printf "  Title: %s" $ fromMaybe "" summary.title
+    -- Has title.
     hasTitle <- readWhetherTitleNonEmpty url
     let hasTitleSure = fromMaybe False $ either (const Nothing) id hasTitle
     putStrLn $

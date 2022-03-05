@@ -69,12 +69,13 @@ pub fn main() !void {
         var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
         defer arena.deinit();
         const allocator = arena.allocator();
-        // Scrape.
+        // Summary.
         try print("Checking \"https://{s}/\":\n", .{url});
         const summary = readAndBuildSummary(allocator, url);
         try print("  Summary: {}\n", .{summary});
         const title_sure = summary.title orelse "";
         try print("  Title: {s}\n", .{title_sure});
+        // Has title.
         const has_title = readWhetherTitleNonEmpty(allocator, url) catch |err| {
             try print("  Has title: {} vs {}\n", .{ err, false });
             continue;
