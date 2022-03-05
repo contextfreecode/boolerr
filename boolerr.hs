@@ -33,10 +33,15 @@ buildSummary :: Doc -> Summary
 buildSummary doc =
   Summary {title = doc.head >>= (.title), ok = True}
 
+readAndBuildSummary :: String -> Summary
+readAndBuildSummary url = case readDoc url of
+  Left err -> Summary {title = Nothing, ok = True}
+  Right doc -> buildSummary doc
+
+main :: IO ()
 main = do
   let urls = ["good", "title-empty", "title-missing", "head-missing", "fail"]
   forM_ urls $ \url -> do
-    let doc = readDoc url
     putStrLn $ printf "Checking \"%s\":" url
-    putStrLn $ show doc
-    -- putStrLn $ printf "Hi: %s %s" (show doc) (show $ buildSummary Doc {head = Nothing})
+    let summary = readDoc url
+    putStrLn $ printf "  Summary: %s" $ show summary
