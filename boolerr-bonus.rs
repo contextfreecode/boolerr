@@ -28,7 +28,8 @@ fn none<T>() -> Opt<T> {
     Err(UNIT)
 }
 
-type Error = String;
+#[derive(Debug)]
+struct Error(String);
 
 struct Doc {
     head: Opt<Head>,
@@ -47,7 +48,7 @@ struct Summary {
 
 fn read_doc(url: &str) -> Result<Doc, Error> {
     bool_of(url.contains("fail"))
-        .map(|_| Err("Failed to read document".into()))
+        .map(|_| Err(Error("Failed to read document".into())))
         .or_else(|_| bool_of(url.contains("head-missing")).map(|_| Ok(Doc { head: none() })))
         .or_else(|_| {
             bool_of(url.contains("title-missing")).map(|_| {

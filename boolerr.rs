@@ -1,7 +1,7 @@
-type Error = String;
+#[derive(Debug)]
+struct Error(String);
 
 struct Doc {
-    // TODO Should these all be optional pointers across languages???
     head: Option<Head>,
 }
 
@@ -18,7 +18,7 @@ struct Summary {
 
 fn read_doc(url: &str) -> Result<Doc, Error> {
     match () {
-        _ if url.contains("fail") => Err("Failed to read document".into()),
+        _ if url.contains("fail") => Err(Error("Failed to read document".into())),
         _ => Ok(match () {
             _ if url.contains("head-missing") => Doc { head: None },
             _ if url.contains("title-missing") => Doc {

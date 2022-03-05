@@ -10,19 +10,21 @@ import Data.List (isInfixOf)
 import Data.Maybe (fromMaybe)
 import Text.Printf (printf)
 
-type Error = String
+data Error = Error (String) deriving (Show)
 
-data Doc = Doc {head :: Maybe Head} deriving (Show)
+data Doc = Doc {head :: Maybe Head}
 
-data Head = Head {title :: Maybe Error} deriving (Show)
+data Head = Head {title :: Maybe String}
 
-data Summary = Summary {title :: Maybe Error, ok :: Bool} deriving (Show)
+data Summary = Summary {title :: Maybe String, ok :: Bool} deriving (Show)
 
-readDoc :: Error -> IO (Either Error Doc)
+-- readDoc
+
+readDoc :: String -> IO (Either Error Doc)
 readDoc url =
   return
     if
-        | isInfixOf "fail" url -> Left "Failed to read document"
+        | isInfixOf "fail" url -> Left $ Error "Failed to read document"
         | otherwise ->
             Right $
               if
@@ -37,28 +39,34 @@ readDoc url =
                             Just Head {title = Just $ printf "Title of %s" url}
                         }
 
+-- buildSummary
+
 buildSummary :: Doc -> Summary
 buildSummary doc =
   Summary {title = doc.head >>= (.title), ok = True}
 
-readAndBuildSummary :: Error -> IO Summary
+-- readAndBuildSummary
+
+readAndBuildSummary :: String -> IO Summary
 readAndBuildSummary url = do
   doc <- readDoc url
   return $ case doc of
     Left err -> Summary {title = Nothing, ok = True}
     Right doc -> buildSummary doc
 
-readAndBuildSummary' :: Error -> IO Summary
+readAndBuildSummary' :: String -> IO Summary
 readAndBuildSummary' url =
   readDoc url >>= \doc -> return $ case doc of
     Left err -> Summary {title = Nothing, ok = True}
     Right doc -> buildSummary doc
 
-readAndBuildSummary'' :: Error -> IO Summary
+readAndBuildSummary'' :: String -> IO Summary
 readAndBuildSummary'' url =
   readDoc url <&> \case
     Left err -> Summary {title = Nothing, ok = True}
     Right doc -> buildSummary doc
+
+-- isTitleNonEmpty
 
 isTitleNonEmpty :: Doc -> Maybe Bool
 isTitleNonEmpty doc = do
@@ -69,23 +77,27 @@ isTitleNonEmpty doc = do
 isTitleNonEmpty' :: Doc -> Maybe Bool
 isTitleNonEmpty' doc = not <$> null <$> (doc.head >>= (.title))
 
-readWhetherTitleNonEmpty :: Error -> IO (Either Error (Maybe Bool))
+-- readWhetherTitleNonEmpty
+
+readWhetherTitleNonEmpty :: String -> IO (Either Error (Maybe Bool))
 readWhetherTitleNonEmpty url = do
   maybeDoc <- readDoc url
   return $ do
     doc <- maybeDoc
     return $ isTitleNonEmpty doc
 
-readWhetherTitleNonEmpty' :: Error -> IO (Either Error (Maybe Bool))
+readWhetherTitleNonEmpty' :: String -> IO (Either Error (Maybe Bool))
 readWhetherTitleNonEmpty' url =
   readDoc url >>= \maybeDoc ->
     return $ maybeDoc >>= \doc -> return $ isTitleNonEmpty doc
 
-readWhetherTitleNonEmpty'' :: Error -> IO (Either Error (Maybe Bool))
+readWhetherTitleNonEmpty'' :: String -> IO (Either Error (Maybe Bool))
 readWhetherTitleNonEmpty'' url = (isTitleNonEmpty <$>) <$> readDoc url
 
-readWhetherTitleNonEmpty''' :: Error -> IO (Either Error (Maybe Bool))
+readWhetherTitleNonEmpty''' :: String -> IO (Either Error (Maybe Bool))
 readWhetherTitleNonEmpty''' url = readDoc url <&> (<&> isTitleNonEmpty)
+
+-- main
 
 main :: IO ()
 main = do

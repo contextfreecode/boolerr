@@ -8,18 +8,18 @@ import Data.List (isInfixOf)
 import Data.Maybe (fromMaybe)
 import Text.Printf (printf)
 
-type Error = String
+data Error = Error (String) deriving (Show)
 
-data Doc = Doc {head :: Maybe Head} deriving (Show)
+data Doc = Doc {head :: Maybe Head}
 
-data Head = Head {title :: Maybe Error} deriving (Show)
+data Head = Head {title :: Maybe String}
 
-data Summary = Summary {title :: Maybe Error, ok :: Bool} deriving (Show)
+data Summary = Summary {title :: Maybe String, ok :: Bool} deriving (Show)
 
-readDoc :: Error -> Either Error Doc
+readDoc :: String -> Either Error Doc
 readDoc url =
   if
-      | isInfixOf "fail" url -> Left "Failed to read document"
+      | isInfixOf "fail" url -> Left $ Error "Failed to read document"
       | otherwise ->
           Right $
             if
@@ -38,7 +38,7 @@ buildSummary :: Doc -> Summary
 buildSummary doc =
   Summary {title = doc.head >>= (.title), ok = True}
 
-readAndBuildSummary :: Error -> Summary
+readAndBuildSummary :: String -> Summary
 readAndBuildSummary url = case readDoc url of
   Left err -> Summary {title = Nothing, ok = True}
   Right doc -> buildSummary doc
@@ -52,12 +52,12 @@ isTitleNonEmpty doc = do
 isTitleNonEmpty' :: Doc -> Maybe Bool
 isTitleNonEmpty' doc = not <$> null <$> (doc.head >>= (.title))
 
-readWhetherTitleNonEmpty :: Error -> Either Error (Maybe Bool)
+readWhetherTitleNonEmpty :: String -> Either Error (Maybe Bool)
 readWhetherTitleNonEmpty url = do
   doc <- readDoc url
   return $ isTitleNonEmpty doc
 
-readWhetherTitleNonEmpty' :: Error -> Either Error (Maybe Bool)
+readWhetherTitleNonEmpty' :: String -> Either Error (Maybe Bool)
 readWhetherTitleNonEmpty' url = isTitleNonEmpty <$> readDoc url
 
 main :: IO ()
