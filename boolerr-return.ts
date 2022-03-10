@@ -27,10 +27,6 @@ function readAndBuildSummary(url: string): Summary {
   }
 }
 
-function titledSummary(summary: Summary): Summary {
-  return { ...summary, title: summary.title || "" };
-}
-
 function isTitleNonEmpty(doc: Doc): boolean | undefined {
   const title = doc.head?.title;
   // return title === undefined ? undefined : !!title;

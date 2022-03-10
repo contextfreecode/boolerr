@@ -53,14 +53,14 @@ buildSummary doc =
 
 readAndBuildSummary :: String -> IO Summary
 readAndBuildSummary url = do
-  doc <- readDoc url
-  return $ case doc of
+  docOrError <- readDoc url
+  return $ case docOrError of
     Left err -> Summary {title = Nothing, ok = True}
     Right doc -> buildSummary doc
 
 readAndBuildSummary' :: String -> IO Summary
 readAndBuildSummary' url =
-  readDoc url >>= \doc -> return $ case doc of
+  readDoc url >>= \docOrError -> return $ case docOrError of
     Left err -> Summary {title = Nothing, ok = True}
     Right doc -> buildSummary doc
 
@@ -85,15 +85,15 @@ isTitleNonEmpty' doc = not <$> null <$> (doc.head >>= (.title))
 
 readWhetherTitleNonEmpty :: String -> IO (Either Error (Maybe Bool))
 readWhetherTitleNonEmpty url = do
-  maybeDoc <- readDoc url
+  docOrError <- readDoc url
   return $ do
-    doc <- maybeDoc
+    doc <- docOrError
     return $ isTitleNonEmpty doc
 
 readWhetherTitleNonEmpty' :: String -> IO (Either Error (Maybe Bool))
 readWhetherTitleNonEmpty' url =
-  readDoc url >>= \maybeDoc ->
-    return $ maybeDoc >>= \doc -> return $ isTitleNonEmpty doc
+  readDoc url >>= \docOrError ->
+    return $ docOrError >>= \doc -> return $ isTitleNonEmpty doc
 
 readWhetherTitleNonEmpty'' :: String -> IO (Either Error (Maybe Bool))
 readWhetherTitleNonEmpty'' url = (isTitleNonEmpty <$>) <$> readDoc url
