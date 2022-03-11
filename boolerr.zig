@@ -19,13 +19,13 @@ const Summary = struct {
     }
 };
 
-const Error = error{ BadRead, OutOfMemory };
-
 fn contains(comptime T: type, haystack: []const T, needle: []const T) bool {
     return std.mem.indexOf(u8, haystack, needle) != null;
 }
 
-fn readDoc(allocator: Allocator, url: []const u8) Error!Doc {
+const ReadError = error{ BadRead, OutOfMemory };
+
+fn readDoc(allocator: Allocator, url: []const u8) ReadError!Doc {
     return if (contains(u8, url, "fail"))
         error.BadRead
     else if (contains(u8, url, "head-missing"))
@@ -77,11 +77,8 @@ pub fn main() !void {
         const title_sure = summary.title orelse "";
         try print("  Title: {s}\n", .{title_sure});
         // Has title.
-        const has_title = readWhetherTitleNonEmpty(allocator, url) catch |err| {
-            try print("  Has title: {} vs {}\n", .{ err, false });
-            continue;
-        };
-        const has_title_bool = has_title orelse false;
-        try print("  Has title: {} vs {}\n", .{ has_title, has_title_bool });
+        const has_title = readWhetherTitleNonEmpty(allocator, url);
+        const has_title_bool = has_title catch null orelse false;
+        try print("  Has title: {} vs {}\n", .{has_title, has_title_bool});
     }
 }
