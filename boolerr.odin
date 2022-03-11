@@ -5,7 +5,7 @@ import "core:mem"
 import "core:mem/virtual"
 import "core:strings"
 
-Doc :: struct {head: Maybe(Head)}
+Doc :: struct {head: ^Head}
 Head :: struct {title: Maybe(string)}
 Summary :: struct {
     title: Maybe(string),
@@ -22,17 +22,17 @@ read_doc :: proc(url: string) -> (result: Doc, err: Error) {
     }
     result =
         Doc{} if strings.contains(url, "head-missing") else
-        Doc{head = Head{}} if strings.contains(url, "title-missing") else
-        Doc{head = Head{title = fmt.aprint("")}} if
+        Doc{head = new_clone(Head{})} if
+            strings.contains(url, "title-missing") else
+        Doc{head = new_clone(Head{title = fmt.aprint("")})} if
             strings.contains(url, "title-empty") else
-        Doc{head = Head{title = fmt.aprint("Title of", url)}}
+        Doc{head = new_clone(Head{title = fmt.aprint("Title of", url)})}
     return
 }
 
 build_summary :: proc(doc: Doc) -> Summary {
     return Summary{
-        // title = doc.head.(Head).title if doc.head != nil else nil,
-        title = doc.head.?.title if doc.head != nil else nil,
+        title = doc.head.title if doc.head != nil else nil,
         ok = true,
     }
 }
@@ -46,11 +46,11 @@ read_and_build_summary :: proc(url: string) -> Summary {
 }
 
 is_title_non_empty :: proc(doc: Doc) -> Maybe(bool) {
-    if doc.head == nil || doc.head.?.title == nil {
+    if doc.head == nil || doc.head.title == nil {
         return nil
     }
-    // return len(doc.head.(Head).title.(string)) > 0
-    return len(doc.head.?.title.?) > 0
+    // return len(doc.head.title.(string)) > 0
+    return len(doc.head.title.?) > 0
 }
 
 read_whether_title_non_empty ::
@@ -76,10 +76,10 @@ main :: proc() {
         fmt.println("  Summary:", summary)
         fmt.println("  Title:", summary.title.? or_else "")
         // Has title.
-        if has_title, err := read_whether_title_non_empty(url); err != nil {
-            fmt.println("  Has title:", err, "vs", false)
-        } else {
-            fmt.println("  Has title:", has_title, "vs", has_title.? or_else false)
-        }
+        has_title, err := read_whether_title_non_empty(url)
+        has_title_text :=
+            fmt.aprint(err) if err != nil else fmt.aprint(has_title)
+        has_title_bool := false if err != nil else has_title.? or_else false
+        fmt.println("  Has title:", has_title_text, "vs", has_title_bool)
     }
 }
