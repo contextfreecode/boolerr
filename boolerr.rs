@@ -2,7 +2,7 @@
 struct Error(String);
 
 struct Doc {
-    head: Option<Head>,
+    head: Option<Box<Head>>,
 }
 
 struct Head {
@@ -22,17 +22,17 @@ fn read_doc(url: &str) -> Result<Doc, Error> {
         _ => Ok(match () {
             _ if url.contains("head-missing") => Doc { head: None },
             _ if url.contains("title-missing") => Doc {
-                head: Some(Head { title: None }),
+                head: Some(Box::new(Head { title: None })),
             },
             _ if url.contains("title-empty") => Doc {
-                head: Some(Head {
+                head: Some(Box::new(Head {
                     title: Some("".into()),
-                }),
+                })),
             },
             _ => Doc {
-                head: Some(Head {
+                head: Some(Box::new(Head {
                     title: Some(format!("Title of {url}")),
-                }),
+                })),
             },
         }),
     }
