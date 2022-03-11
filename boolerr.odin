@@ -31,6 +31,7 @@ read_doc :: proc(url: string) -> (result: Doc, err: Error) {
 
 build_summary :: proc(doc: Doc) -> Summary {
     return Summary{
+        // title = doc.head.(Head).title if doc.head != nil else nil,
         title = doc.head.?.title if doc.head != nil else nil,
         ok = true,
     }

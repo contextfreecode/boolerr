@@ -44,7 +44,7 @@ buildSummary doc =
 
 readAndBuildSummary :: String -> Summary
 readAndBuildSummary url = case readDoc url of
-  Left err -> Summary {title = Nothing, ok = True}
+  Left err -> Summary {title = Nothing, ok = False}
   Right doc -> buildSummary doc
 
 isTitleNonEmpty :: Doc -> Maybe Bool

@@ -40,6 +40,7 @@ fn readDoc(allocator: Allocator, url: []const u8) !Doc {
 
 fn buildSummary(doc: Doc) Summary {
     return Summary{
+        // .title = if (doc.head != null) doc.head.?.title else null,
         .title = if (doc.head) |head| head.title else null,
         .ok = true,
     };

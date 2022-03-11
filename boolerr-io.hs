@@ -55,7 +55,7 @@ readAndBuildSummary :: String -> IO Summary
 readAndBuildSummary url = do
   docOrError <- readDoc url
   return $ case docOrError of
-    Left err -> Summary {title = Nothing, ok = True}
+    Left err -> Summary {title = Nothing, ok = False}
     Right doc -> buildSummary doc
 
 readAndBuildSummary' :: String -> IO Summary
