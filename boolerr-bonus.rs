@@ -32,7 +32,7 @@ fn none<T>() -> Opt<T> {
 struct Error(String);
 
 struct Doc {
-    head: Opt<Head>,
+    head: Opt<Box<Head>>,
 }
 
 struct Head {
@@ -53,24 +53,24 @@ fn read_doc(url: &str) -> Result<Doc, Error> {
         .or_else(|_| {
             bool_of(url.contains("title-missing")).map(|_| {
                 Ok(Doc {
-                    head: Ok(Head { title: none() }),
+                    head: Ok(Box::new(Head { title: none() })),
                 })
             })
         })
         .or_else(|_| {
             bool_of(url.contains("title-empty")).map(|_| {
                 Ok(Doc {
-                    head: Ok(Head {
+                    head: Ok(Box::new(Head {
                         title: Ok("".into()),
-                    }),
+                    })),
                 })
             })
         })
         .unwrap_or_else(|_| {
             Ok(Doc {
-                head: Ok(Head {
+                head: Ok(Box::new(Head {
                     title: Ok(format!("Title of {url}")),
-                }),
+                })),
             })
         })
 }
