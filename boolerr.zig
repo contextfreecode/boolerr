@@ -1,7 +1,7 @@
 const std = @import("std");
 const Allocator = std.mem.Allocator;
 
-const Doc = struct { head: ?Head };
+const Doc = struct { head: ?*Head };
 const Head = struct { title: ?[]u8 };
 const Summary = struct {
     title: ?[]u8,
@@ -23,6 +23,12 @@ fn contains(comptime T: type, haystack: []const T, needle: []const T) bool {
     return std.mem.indexOf(u8, haystack, needle) != null;
 }
 
+fn dupe(allocator: Allocator, comptime T: type, value: anytype) !*T {
+    const result = try allocator.create(T);
+    result.* = value;
+    return result;
+}
+
 const ReadError = error{ BadRead, OutOfMemory };
 
 fn readDoc(allocator: Allocator, url: []const u8) ReadError!Doc {
@@ -31,11 +37,11 @@ fn readDoc(allocator: Allocator, url: []const u8) ReadError!Doc {
     else if (contains(u8, url, "head-missing"))
         Doc{ .head = null }
     else if (contains(u8, url, "title-missing"))
-        Doc{ .head = Head{ .title = null } }
+        Doc{ .head = try dupe(allocator, Head, Head{ .title = null }) }
     else if (contains(u8, url, "title-empty"))
-        Doc{ .head = Head{ .title = try std.fmt.allocPrint(allocator, "", .{}) } }
+        Doc{ .head = try dupe(allocator, Head, Head{ .title = try std.fmt.allocPrint(allocator, "", .{}) }) }
     else
-        Doc{ .head = Head{ .title = try std.fmt.allocPrint(allocator, "Title of {s}", .{url}) } };
+        Doc{ .head = try dupe(allocator, Head, Head{ .title = try std.fmt.allocPrint(allocator, "Title of {s}", .{url}) }) };
 }
 
 fn buildSummary(doc: Doc) Summary {
@@ -79,6 +85,6 @@ pub fn main() !void {
         // Has title.
         const has_title = readWhetherTitleNonEmpty(allocator, url);
         const has_title_bool = has_title catch null orelse false;
-        try print("  Has title: {} vs {}\n", .{has_title, has_title_bool});
+        try print("  Has title: {} vs {}\n", .{ has_title, has_title_bool });
     }
 }
