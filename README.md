@@ -1,5 +1,8 @@
-## Corrections & Notes
+## Corrections, clarifications, links, & notes
 
+- Related links:
+  - [Rust Boolean methods for `Result`](https://doc.rust-lang.org/std/result/#boolean-operators)
+  - [gingerBill of Odin on fancy Booleans](https://www.gingerbill.org/article/2021/09/06/value-propagation-experiment-part-2/)
 - In ECMAScript, `?.` is called "optional chaining", and in Kotlin is called
   the "safe call operator".
 - I also could have used the ECMAScript `??` nullish coalescing operator to be
