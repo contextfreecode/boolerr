@@ -123,12 +123,11 @@ fn main() {
         println!("  Title: {title_sure:?}");
         // Has title.
         let has_title = read_whether_title_non_empty(url);
-        let has_title_sure = has_title
-            .as_ref()
-            // .map(|it| it.unwrap_or(FALSE))
-            // .unwrap_or(FALSE);
-            .unwrap_or(&Ok(FALSE))
-            .unwrap_or(FALSE);
+        // let has_title_sure = has_title
+        //     .as_ref()
+        //     .map(|it| it.unwrap_or(FALSE))
+        //     .unwrap_or(FALSE);
+        let has_title_sure = has_title.as_ref().unwrap_or(&none()).unwrap_or(FALSE);
         println!("  Has title: {has_title:?} vs {has_title_sure:?}");
     }
     println!("Opt: {:?}, {:?}", opt_str(""), opt_str("Bye, y'all."));
