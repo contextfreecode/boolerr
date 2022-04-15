@@ -46,7 +46,7 @@ function main() {
     // Summary.
     const summary = readAndBuildSummary(url);
     console.log("  Summary:", summary);
-    console.log("  Title:", summary.title || "");
+    console.log("  Title:", summary.title ?? "");
     // Has title.
     const hasTitle = readWhetherTitleNonEmpty(url);
     const hasTitleSure = hasTitle instanceof Error ? false : hasTitle || false;
@@ -57,4 +57,4 @@ function main() {
 main();
 
 // Junk to prevent vscode from whining about duplicate ids.
-export const throwing = undefined;
+export const returning = undefined;

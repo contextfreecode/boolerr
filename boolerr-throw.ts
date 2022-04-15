@@ -47,11 +47,11 @@ function main() {
     // Summary.
     const summary = readAndBuildSummary(url);
     console.log("  Summary:", summary);
-    console.log("  Title:", summary.title || "");
+    console.log("  Title:", summary.title || ""); // or ??
     // Has title.
     try {
       const hasTitle = readWhetherTitleNonEmpty(url);
-      console.log(`  Has title: ${hasTitle} vs ${hasTitle || false}`);
+      console.log(`  Has title: ${hasTitle} vs ${hasTitle ?? false}`); // or ||
     } catch (error) {
       console.log(`  Has title: ${error} vs ${false}`);
     }
