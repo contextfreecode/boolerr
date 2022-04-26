@@ -56,6 +56,9 @@ isTitleNonEmpty doc = do
 isTitleNonEmpty' :: Doc -> Maybe Bool
 isTitleNonEmpty' doc = not <$> null <$> (doc.head >>= (.title))
 
+isTitleNonEmpty'' :: Doc -> Maybe Bool
+isTitleNonEmpty'' doc = not . null <$> (doc.head >>= (.title))
+
 readWhetherTitleNonEmpty :: String -> Either Error (Maybe Bool)
 readWhetherTitleNonEmpty url = do
   doc <- readDoc url

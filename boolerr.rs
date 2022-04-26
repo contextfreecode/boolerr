@@ -56,6 +56,10 @@ fn read_and_build_summary(url: &str) -> Summary {
 }
 
 fn is_title_non_empty(doc: &Doc) -> Option<bool> {
+    // doc.head
+    //     .as_ref()
+    //     .and_then(|head| head.title.as_ref())
+    //     .map(|title| !title.is_empty())
     Some(!doc.head.as_ref()?.title.as_ref()?.is_empty())
 }
 
