@@ -1,3 +1,4 @@
+import List from "list"
 import Option from "option"
 import String from "string"
 
@@ -35,9 +36,17 @@ let buildSummary: Doc -> Summary = doc =>
     ok: true,
   }
 
+let readAndBuildSummary: String -> Summary = url =>
+  match (readDoc(url)) {
+    Ok(doc) => buildSummary(doc),
+    Err(_) => { title: None, ok: false },
+  }
+
 let main = () => {
-  print(readDoc("fail"))
-  print(readDoc("good"))
+  let urls = ["good", "title-empty", "title-missing", "head-missing", "fail"]
+  List.forEach(url => {
+    print(readAndBuildSummary(url))
+  }, urls)
 }
 
 main()
