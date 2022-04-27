@@ -1,0 +1,43 @@
+import Option from "option"
+import String from "string"
+
+type Err = String
+
+record Head {
+  title: Option<String>,
+}
+
+record Doc {
+  head: Option<Head>,
+}
+
+record Summary {
+  title: Option<String>,
+  ok: Bool,
+}
+
+let readDoc: String -> Result<Doc, Err> = url => {
+  let has = text => String.contains(url, text)
+  if (has("fail")) Err("Bad read of url")
+  else Ok(
+    match (url) {
+      _ when has("head-missing") => { head: None, },
+      _ when has("title-missing") => { head: Some({ title: None, }), },
+      _ when has("title-empty") => { head: Some({ title: Some(""), }), },
+      _ => { head: Some({ title: Some("Title of url"), }), },
+    }
+  )
+}
+
+let buildSummary: Doc -> Summary = doc =>
+  {
+    title: Option.flatMap((head: Head) => head.title, doc.head),
+    ok: true,
+  }
+
+let main = () => {
+  print(readDoc("fail"))
+  print(readDoc("good"))
+}
+
+main()
