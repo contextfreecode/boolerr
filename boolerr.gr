@@ -1,5 +1,6 @@
 import List from "list"
 import Option from "option"
+import Result from "result"
 import String from "string"
 
 type Err = String
@@ -19,7 +20,7 @@ record Summary {
 
 let readDoc: String -> Result<Doc, Err> = url => {
   let has = text => String.contains(url, text)
-  if (has("fail")) Err("Bad read of url")
+  if (has("fail")) Err(String.concat("Bad read of ", url))
   else Ok(
     match (url) {
       _ when has("head-missing") => { head: None, },
@@ -30,11 +31,10 @@ let readDoc: String -> Result<Doc, Err> = url => {
   )
 }
 
-let buildSummary: Doc -> Summary = doc =>
-  {
-    title: Option.flatMap((head: Head) => head.title, doc.head),
-    ok: true,
-  }
+let buildSummary: Doc -> Summary = doc => {
+  let title = Option.flatMap((head: Head) => head.title, doc.head)
+  { title, ok: true }
+}
 
 let readAndBuildSummary: String -> Summary = url =>
   match (readDoc(url)) {
@@ -42,10 +42,29 @@ let readAndBuildSummary: String -> Summary = url =>
     Err(_) => { title: None, ok: false },
   }
 
+let isTitleNonEmpty: Doc -> Option<Bool> = doc =>
+  Option.flatMap((head: Head) =>
+    Option.map(title => String.length(title) > 0, head.title), doc.head)
+
+let readWhetherTitleNonEmpty: String -> Result<Option<Bool>, Err> = url =>
+  Result.map(doc => isTitleNonEmpty(doc), readDoc(url))
+
 let main = () => {
+  let printAll = strings => print(List.join(" ", strings))
   let urls = ["good", "title-empty", "title-missing", "head-missing", "fail"]
   List.forEach(url => {
-    print(readAndBuildSummary(url))
+    print(List.join("", ["-- Checking \"https://", url, "\" --"]))
+    // Summary.
+    let summary = readAndBuildSummary(url)
+    printAll(["Summary:", toString(summary)])
+    printAll(["Title:", Option.unwrapWithDefault("", summary.title)])
+    // Has title.
+    let hasTitle = readWhetherTitleNonEmpty(url)
+    let hasTitleSure = Option.unwrapWithDefault(
+      false,
+      Option.flatten(Result.toOption(hasTitle))
+    )
+    printAll(["Has title:", toString(hasTitle), "vs", toString(hasTitleSure)])
   }, urls)
 }
 
