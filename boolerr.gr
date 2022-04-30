@@ -20,9 +20,9 @@ record Summary {
 
 let readDoc: String -> Result<Doc, Err> = url => {
   let has = text => String.contains(url, text)
-  if (has("fail")) Err(String.concat("Bad read of ", url))
+  if (has("fail")) Err("Bad read of " ++ url)
   else Ok(
-    match (url) {
+    match (void) {
       _ when has("head-missing") => { head: None, },
       _ when has("title-missing") => { head: Some({ title: None, }), },
       _ when has("title-empty") => { head: Some({ title: Some(""), }), },
