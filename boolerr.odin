@@ -21,17 +21,17 @@ read_doc :: proc(url: string) -> (result: Doc, err: Error) {
         return
     }
     result =
-        Doc{} if strings.contains(url, "head-missing") else
-        Doc{head = new_clone(Head{})} if
+        {} if strings.contains(url, "head-missing") else
+        {head = new_clone(Head{})} if
             strings.contains(url, "title-missing") else
-        Doc{head = new_clone(Head{title = fmt.aprint("")})} if
+        {head = new_clone(Head{title = fmt.aprint("")})} if
             strings.contains(url, "title-empty") else
-        Doc{head = new_clone(Head{title = fmt.aprint("Title of", url)})}
+        {head = new_clone(Head{title = fmt.aprint("Title of", url)})}
     return
 }
 
 build_summary :: proc(doc: Doc) -> Summary {
-    return Summary{
+    return {
         title = doc.head.title if doc.head != nil else nil,
         ok = true,
     }
@@ -39,7 +39,7 @@ build_summary :: proc(doc: Doc) -> Summary {
 
 read_and_build_summary :: proc(url: string) -> Summary {
     if doc, err := read_doc(url); err != nil {
-        return Summary{}
+        return {}
     } else {
         return build_summary(doc)
     }
