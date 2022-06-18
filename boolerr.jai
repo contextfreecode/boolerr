@@ -1,5 +1,6 @@
 #import "Tagged_Union";
 
+// Recommendation from ctp: Option :: struct (T: Type) { value: T = ---; exists: bool }
 Maybe :: struct (Value: Type) {
     using Tagged_Union(Value, void);
 }
