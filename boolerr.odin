@@ -37,6 +37,8 @@ build_summary :: proc(doc: Doc) -> Summary {
     }
 }
 
+// Sync diff with this comment.
+
 read_and_build_summary :: proc(url: string) -> Summary {
     if doc, err := read_doc(url); err != nil {
         return {}
@@ -67,7 +69,7 @@ main :: proc() {
     // Loop.
     urls := []string{"good", "title-empty", "title-missing", "head-missing", "fail"}
     for url in urls {
-        // Reset arena.
+        // Reset storage on each pass.
         temp := virtual.growing_arena_temp_begin(&arena)
         defer virtual.growing_arena_temp_end(temp)
         // Summary.
